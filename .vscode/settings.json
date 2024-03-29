@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "devicetree.h": "c",
+        "util.h": "c",
+        "nrfx_gpiote.h": "c",
+        "nrfx_log.h": "c",
+        "log.h": "c",
+        "fram.h": "c",
+        "hci.h": "c",
+        "hrs.h": "c",
+        "config_commands.h": "c",
+        "i2c_sensors.h": "c",
+        "app_manuf_data.h": "c",
+        "stdint.h": "c",
+        "uart.h": "c",
+        "device.h": "c"
+    }
+}
