@@ -76,9 +76,12 @@ static void timer_event_handler(struct k_timer *timer_handler)
     }
 }
 
-
-
-
+/**
+ * @brief Function to update the advertsising frame. This function is called after every certain time to update the
+ * manufacture data buffer.
+ * 
+ * @param work Work item for the thread
+ */
 void update_frame_work_fn(struct k_work *work)
 {
     update_manufacture_data();
@@ -87,28 +90,34 @@ void update_frame_work_fn(struct k_work *work)
 }
 
 
-// Main Application
+/**
+ * @brief Main Application
+ * 
+ * @return int 
+ */
 int main(void)
 {
-    // =========================================================================
-    // VEXT10 by comparator to determine if we are config or business
+    /**
+     * @brief  VEXT10 by comparator to determine if we are config or business
+     * 
+     */
 #if (USE_GPIO_PIN)
         uint8_t u8Mode = nrf_gpio_pin_read (VEXT10_PIN);
-        // not supported
 #else
         uint8_t application_mode = init_comparator_1_vext_and_read_value();
 #endif
 
 #if (USE_UVLO_KILL_SWITCH)
-    // =========================================================================
-    // VBULK10 by comparator to determine if we are running out of gas
+    /**
+     * @brief VBULK10 by comparator to determine if we are running out of gas
+     * 
+     */
         init_comparator_2_vbulk();
 #endif
 
         if (application_mode == true)
         {
-            // UART Init returns nonzero on error
-            if (init_uart())
+            if (init_uart() != 0)
             {
                 LOG_ERR("Init UART failed");
                 indicate_error(ERROR_TYPE_UART);
@@ -116,16 +125,16 @@ int main(void)
             else
             {
                 LOG_INF("UART initialization successful, starting CLI");
+
                 (void)init_command_line_interface();
                 toggle_CN_1_4();
-                // Printing Welcome Message
+
                 LOG_INF("\rBLE Firmware - UART Link\n");
                 LOG_INF("\r%s %s\n", FW_VERSION, FW_BUILD_DATE);
 
                 // Reading FRAM.
                 dump_fram(true);
 
-                //Process the UART Command
                 k_work_init(&process_command_task, (k_work_handler_t) process_command_fn); 
             }
         }
@@ -147,10 +156,10 @@ int main(void)
                 is_temp_pressure_sensor_triggered = false;
             }
                 
-
-        // **********************************************************
-            // Business logic - Load FRAM and act accordingly
-            // Reading FRAM.
+            /**
+             * @brief Read FRAM and act accordingly.
+             * 
+             */
             if(dump_fram(true) == FRAM_SUCCESS)
             {
                 u8Polarity = read_polarity(fram_data.sleep_after_wake);
@@ -164,6 +173,7 @@ int main(void)
             }
             else
             {
+                // Reset event counter 
                 fram_data.event_counter = 0;
                 LOG_ERR("Failed to Read from FRAM Device");
                 indicate_error(ERROR_TYPE_FRAM);
