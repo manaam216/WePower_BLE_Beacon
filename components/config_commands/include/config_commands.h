@@ -92,13 +92,6 @@ typedef struct
 int init_uart(void);
 
 /**
- * @brief Print the buffer to UART 0
- * 
- * @param buffer Buffer containing the data to print
- */
-void print_uart(char *buffer);
-
-/**
  * @brief Process Command function
  * 
  * @param work Work Item to process

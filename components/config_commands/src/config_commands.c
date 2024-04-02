@@ -361,22 +361,6 @@ void preset_fram_by_type(uint8_t preset_type)
 }
 
 /**
- * @brief Print the buffer to UART 0
- * 
- * @param buffer Buffer containing the data to print
- */
-void print_uart(char *buffer)
-{
-	int msg_len = strlen(buffer);
-
-	for (int i = 0; i < msg_len; i++) {
-		uart_poll_out(dev_uart, buffer[i]);
-	}
-
-    uart_poll_out(dev_uart, '\n');
-}
-
-/**
  * @brief Function to dump content to FRAM
  * 
  * @param print Flag to indicate if printing should be done
