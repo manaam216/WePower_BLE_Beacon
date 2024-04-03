@@ -13,44 +13,6 @@
 #define SIZE_OF_ENCRYPTED_KEY_STR   (3 * ENCRYPTED_KEY_NUM_BYTES) + 1
 #define NUMBER_OF_BITS_IN_A_BYTE    8
 
-#define EVENT_COUNTER_MIN_VALUE     0
-#define EVENT_COUNTER_MAX_VALUE     0xFFFFFFFF
-#define EVENT_COUNTER_DEFAULT_VALUE 0
-
-#define SERIAL_NUMBER_MIN_VALUE     0
-#define SERIAL_NUMBER_MAX_VALUE     0xFFFFFFFF
-#define SERIAL_NUMBER_DEFAULT_VALUE 1
-
-#define DEVCIE_TYPE_MIN_VALUE       DEVICE_TYPE_LEGACY
-#define DEVICE_TYPE_DEFAULT_VALUE   DEVICE_TYPE_BUTTON
-#define ADV_EVT_INT_MIN_VALUE       10
-#define ADV_INT_MAX_VALUE           100
-#define ADV_INT_DEFAULT_VALUE       20
-
-#define NO_OF_ADV_EVT_MIN_VALUE     1
-#define NO_OF_ADV_EVT_MAX_VALUE     0XFE
-#define NO_OF_ADV_EVT_DEFAULT_VALUE 0xFE
-
-#define EVT_SLEEP_MIN_VALUE         0
-#define EVT_SLEEP_MAX_VALUE         10000
-#define EVT_SLEEP_DEFAULT_VALUE     0
-
-#define POL_SLEEP_MIN_VALUE         0     
-#define POL_SLEEP_MAX_VALUE         100
-#define POL_SLEEP_DEFAULT_VALUE     0
-
-#define TX_POWER_MIN_VALUE          0
-#define TX_POWER_MAX_VALUE          200
-#define TX_POWER_DEFAULT_VALUE      80
-
-#define POL_METHOD_MIN_VALUE        0
-#define POL_METHOD_MAX_VALUE        2
-#define POL_METHOD_DEFAULT_VALUE    0
-
-#define ISL9122_VOLTS_MIN_VALUE     0
-#define ISL9122_VOLTS_MAX_VALUE     0xFF
-#define ISL9122_VOLTS_DEFAULT_VALUE 0
-
 #define PRESET0_DEFAULT_EVT_COUNTER         0
 #define PRESET0_DEFAULT_SERIAL_NUM          1
 #define PRESET0_DEFAULT_TYPE                0
@@ -115,6 +77,14 @@
 #define PRESET4_DEFAULT_ENCRYPT_KEY         {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}
 #define PRESET4_DEFAULT_TX_POWER            80
 #define PRESET4_DEFAULT_NAME                {'l','e','a','k', ' ', 's', 'e', 'n', ' ', ' '}
+
+#define COMMAND_TYPE_TO_STR(x)  (x == COMMAND_TYPE_SET)?    "SET":\
+                                (x == COMMAND_TYPE_GET)?    "GET":\
+                                (x == COMMAND_TYPE_DUMP)?   "DUMP":\
+                                (x == COMMAND_TYPE_RESET)?  "RESET":\
+                                (x == COMMAND_TYPE_PRESET)? "PRESET":\
+                                (x == COMMAND_TYPE_CLEAR)?  "CLEAR":\
+                                "UNKNOWN CMD RECEIVED"
 
 LOG_MODULE_DECLARE(wepower);
 
@@ -531,7 +501,7 @@ static void handle_reset_commmand()
 {
     uint32_t field_data = 0;
 
-    for (uint8_t fram_info_arr_idx = 0; fram_info_arr_idx < 12; fram_info_arr_idx++)
+    for (uint8_t fram_info_arr_idx = EV_CTR; fram_info_arr_idx < MAX_FRAM_FIELDS; fram_info_arr_idx++)
     {
         command_data.field_index = fram_info_arr_idx;
         switch (FRAM_INFO[fram_info_arr_idx].type)
@@ -738,36 +708,35 @@ static void handle_preset_commmand()
  */
 void process_command_fn(struct k_work *work)
 {           
-    LOG_INF("Parsed Command is Type: %c, field: %d, data: %s\n", command_data.type, command_data.field_index, command_data.data);
+    LOG_INF("Parsed Command is Type: %s, field: %d, data: %s\n", COMMAND_TYPE_TO_STR(command_data.type), command_data.field_index, command_data.data);
 
-    if ((command_data.type == 'G') || (command_data.type == 'g'))
+    switch (command_data.type)
     {
+    case COMMAND_TYPE_GET:
         LOG_INF("Get: G/g Command Received with Field Index: %d",command_data.field_index);
         handle_get_command();
-    }
-    else if ((command_data.type == 'S') || (command_data.type == 's'))
-    {
+        break;
+    case COMMAND_TYPE_SET:
         LOG_INF("Set: S/s Command Received with Field Index: %d  Value: %s",command_data.field_index,command_data.data);
         handle_set_command(); 
-    }
-    else if ((command_data.type == 'C') || (command_data.type == 'c'))
-    {      
+        break;
+    case COMMAND_TYPE_CLEAR:
         LOG_INF("Clear: C/c Command Received with Field Index: %d",command_data.field_index);
         handle_clear_command();
-    }
-    else if ((command_data.type == 'R') || (command_data.type == 'r')){
-
+        break;
+    case COMMAND_TYPE_RESET:
         LOG_INF( "Reset All Data: R/r Command Received");
-        handle_reset_commmand();   
-    }
-    else if ((command_data.type == 'D') || (command_data.type == 'd')){
+        handle_reset_commmand(); 
+    case COMMAND_TYPE_DUMP:
         LOG_INF( "Dump: D/d Command Received");
         handle_dump_command();
-    }
-    else if ((command_data.type == 'P') || (command_data.type == 'p'))
-    {
+        break;
+    case COMMAND_TYPE_PRESET:
         LOG_INF( "Preset: P/p Command Received for type %d\n", command_data.field_index);
         handle_preset_commmand();
+        break;
+    default:
+        break;
     }
     
     memset(&command_data,0, sizeof(command_data));

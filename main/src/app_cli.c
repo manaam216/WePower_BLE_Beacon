@@ -37,7 +37,7 @@ static int wrong_format_handler(const struct shell *sh, size_t argc, char **argv
 static int set_event_counter_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = (uint8_t)atoi(argv[1]);
     command_data.data[1] = atoi(argv[1])>> (8*1);
@@ -46,7 +46,18 @@ static int set_event_counter_handler(const struct shell *sh, size_t argc, char *
 
     command_data.data_len = 4U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= EVENT_COUNTER_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
+  
     return 0;
 }
 
@@ -61,7 +72,7 @@ static int set_event_counter_handler(const struct shell *sh, size_t argc, char *
 static int set_serial_number_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = (uint8_t)atoi(argv[1]);
     command_data.data[1] = atoi(argv[1])>> (8*1);
@@ -70,7 +81,17 @@ static int set_serial_number_handler(const struct shell *sh, size_t argc, char *
 
     command_data.data_len = 4U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= SERIAL_NUMBER_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -85,12 +106,22 @@ static int set_serial_number_handler(const struct shell *sh, size_t argc, char *
 static int set_sensor_type_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = atoi(argv[1]);
     command_data.data_len = 1U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= DEVICE_TYPE_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -105,12 +136,22 @@ static int set_sensor_type_handler(const struct shell *sh, size_t argc, char **a
 static int set_packet_interval_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = atoi(argv[1]);
     command_data.data_len = 1U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= ADV_INT_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -125,14 +166,24 @@ static int set_packet_interval_handler(const struct shell *sh, size_t argc, char
 static int set_max_number_of_packets_before_repeat_event_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = (uint8_t)atoi(argv[1]);
     command_data.data[1] = atoi(argv[1])>>8;
 
     command_data.data_len = 2U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= NO_OF_ADV_EVT_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -147,14 +198,24 @@ static int set_max_number_of_packets_before_repeat_event_handler(const struct sh
 static int set_sleep_time_between_events_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = (uint8_t)atoi(argv[1]);
     command_data.data[1] = atoi(argv[1])>> 8 ;
 
     command_data.data_len = 2U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= EVT_SLEEP_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -169,14 +230,24 @@ static int set_sleep_time_between_events_handler(const struct shell *sh, size_t 
 static int set_sleep_time_before_polarity_detection_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0] = (uint8_t)atoi(argv[1]);
     command_data.data[1] = atoi(argv[1])>>8;
 
     command_data.data_len = 2U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= POL_SLEEP_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -191,7 +262,7 @@ static int set_sleep_time_before_polarity_detection_handler(const struct shell *
 static int set_encrypted_key_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data, 0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
     command_data.data[0]  = (uint8_t)atoi(argv[1]);
     command_data.data[1]  = (uint8_t)atoi(argv[2]);
@@ -227,13 +298,23 @@ static int set_encrypted_key_handler(const struct shell *sh, size_t argc, char *
 static int set_tx_power_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
 
     command_data.data[0] = atoi(argv[1]);
     command_data.data_len = 1U; 
 
-    k_work_submit(&process_command_task);
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= TX_POWER_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
@@ -248,7 +329,7 @@ static int set_tx_power_handler(const struct shell *sh, size_t argc, char **argv
 static int set_device_name_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
-    command_data.type = 's';
+    command_data.type = COMMAND_TYPE_SET;
     command_data.field_index = atoi(argv[0]);
 
     memcpy(command_data.data, (uint8_t*)argv[1], strlen(argv[1]));
@@ -273,10 +354,18 @@ static int get_field_index_handler(const struct shell *sh, size_t argc, char **a
 {
     memset(&command_data,0, sizeof(command_data));
 
-    command_data.type = 'g';
+    command_data.type = COMMAND_TYPE_GET;
     command_data.field_index = atoi(argv[1]);
+    if (command_data.field_index < MAX_FRAM_FIELDS)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Field index out of bounds for get command \n");
+        memset(&command_data,0, sizeof(command_data));
+    }
 
-    k_work_submit(&process_command_task);
     return 0;
 }
 
@@ -296,7 +385,7 @@ static int dump_fram_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
 
-    command_data.type = 'd';
+    command_data.type = COMMAND_TYPE_DUMP;
     command_data.field_index = atoi(argv[1]);
 
     k_work_submit(&process_command_task);
@@ -319,7 +408,7 @@ static int reset_fram_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
 
-    command_data.type = 'r';
+    command_data.type = COMMAND_TYPE_RESET;
     command_data.field_index = atoi(argv[1]);
 
     k_work_submit(&process_command_task);
@@ -342,14 +431,52 @@ static int preset_fram_handler(const struct shell *sh, size_t argc, char **argv)
 {
     memset(&command_data,0, sizeof(command_data));
 
-    command_data.type = 'p';
+    command_data.type = COMMAND_TYPE_PRESET;
     command_data.field_index = atoi(argv[1]);
-
-    k_work_submit(&process_command_task);
+    if (command_data.field_index <= PRESET_TYPE_GENERATOR)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Field index out of bounds for preset command \n");
+        memset(&command_data,0, sizeof(command_data));
+    }
     return 0;
 }
 
 /****************************END OF PRESET FUNCTIONS FOR FRAM FIELDS****************************/
+
+/******************************** CLEAR FUNCTIONS FOR FRAM FIELDS**********************************/
+
+/**
+ * @brief Clear FRAM field index command handler
+ * 
+ * @param sh Shell object
+ * @param argc Size of the arguments
+ * @param argv Arguments, to be accessed as tokens
+ * @return int error code
+ */
+static int clear_fram_handler(const struct shell *sh, size_t argc, char **argv)
+{
+    memset(&command_data, 0, sizeof(command_data));
+
+    command_data.type = COMMAND_TYPE_CLEAR;
+    command_data.field_index = atoi(argv[1]);
+
+    if (command_data.field_index < MAX_FRAM_FIELDS)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Field index out of bounds for clear command \n");
+        memset(&command_data,0, sizeof(command_data));
+    }
+    return 0;
+}
+
+/****************************END OF CLEAR FUNCTIONS FOR FRAM FIELDS****************************/
 
 /**
  * @brief Initialize the command line interface for receiving commands via UART
@@ -377,12 +504,14 @@ uint8_t init_command_line_interface()
     SHELL_CMD_REGISTER(g, NULL, "Get commands", get_field_index_handler);
     SHELL_CMD_REGISTER(S, &set, "Set commands", wrong_format_handler);
     SHELL_CMD_REGISTER(G, NULL, "Get commands", get_field_index_handler);
-    SHELL_CMD_REGISTER(d, NULL, "Get commands", dump_fram_handler);
-    SHELL_CMD_REGISTER(D, NULL, "Get commands", dump_fram_handler);
-    SHELL_CMD_REGISTER(r, NULL, "Get commands", reset_fram_handler);
-    SHELL_CMD_REGISTER(R, NULL, "Get commands", reset_fram_handler);
-    SHELL_CMD_REGISTER(p, NULL, "Get commands", preset_fram_handler);
-    SHELL_CMD_REGISTER(P, NULL, "Get commands", preset_fram_handler);
+    SHELL_CMD_REGISTER(d, NULL, "Dump commands", dump_fram_handler);
+    SHELL_CMD_REGISTER(D, NULL, "Dump commands", dump_fram_handler);
+    SHELL_CMD_REGISTER(r, NULL, "Reset commands", reset_fram_handler);
+    SHELL_CMD_REGISTER(R, NULL, "Reset commands", reset_fram_handler);
+    SHELL_CMD_REGISTER(p, NULL, "Preset commands", preset_fram_handler);
+    SHELL_CMD_REGISTER(P, NULL, "Preset commands", preset_fram_handler);
+    SHELL_CMD_REGISTER(c, NULL, "Preset commands", clear_fram_handler);
+    SHELL_CMD_REGISTER(C, NULL, "Preset commands", clear_fram_handler);
 
     #if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_shell_uart), zephyr_cdc_acm_uart)
     const struct device *dev;
