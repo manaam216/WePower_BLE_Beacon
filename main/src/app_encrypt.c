@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/logging/log.h>
-#include <hal/nrf_gpio.h>
 
 #include "encrypt.h"
 #include "device_config.h"
 
 #include "app_manuf_data.h"
 #include "app_gpio.h"
+
+#define ENCRYPT 0
 
 LOG_MODULE_DECLARE(wepower);
 
@@ -23,7 +24,6 @@ LOG_MODULE_DECLARE(wepower);
 void encrypt_data(uint8_t* clear_text_buf, uint8_t* encrypted_text_buf, uint8_t len )
 {
     set_CN1_7();
-#define ENCRYPT 0
 #ifdef ENCRYPT
     // Not we want to encrypt the data
     if(app_encrypt_payload(clear_text_buf, len, encrypted_text_buf, len) == ENCRYPTION_ERROR)

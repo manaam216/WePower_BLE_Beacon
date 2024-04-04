@@ -101,11 +101,8 @@ int main(void)
      * @brief  VEXT10 by comparator to determine if we are config or business
      * 
      */
-#if (USE_GPIO_PIN)
-        uint8_t u8Mode = nrf_gpio_pin_read (VEXT10_PIN);
-#else
-        uint8_t application_mode = init_comparator_1_vext_and_read_value();
-#endif
+
+    uint8_t application_mode = init_comparator_1_vext_and_read_value();
 
 #if (USE_UVLO_KILL_SWITCH)
     /**
@@ -164,11 +161,9 @@ int main(void)
             {
                 u8Polarity = read_polarity(fram_data.sleep_after_wake);
             
-                if(ENCR_KEY_IN_FRAM)
+                for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++)
                 {
-                    for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++){
-                        ecb_key[i] = fram_data.encrypted_key[i];
-                    }
+                    ecb_key[i] = fram_data.encrypted_key[i];
                 }
             }
             else

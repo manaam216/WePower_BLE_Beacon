@@ -72,16 +72,10 @@ int app_accel_config ()
 	config[0] = 0x78;
 	// default, but chaper to send than make two writes 
 	config[1] = 0x04; 
-	#if (IMU_I2C_TRIGGER)
-	config[2] = 0x02; // Reg 0x22 2, use I2C as TRIG
-	#else
-	config[2] = 0x00; // Reg 0x22 0, use INT2 as TRIG
-	#endif
-	#if (IMU_I2C_DRDY)
-	config[3] = 0x00;
-	#else
-	config[3] = 0x01; // Reg 0x23 use INT1 as DRDY
-	#endif 
+	// Reg 0x22 0, use INT2 as TRIG
+	config[2] = 0x00; 
+	// Reg 0x23 use INT1 as DRDY
+	config[3] = 0x01; 
 	
 	const struct device *const i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
 
@@ -91,18 +85,7 @@ int app_accel_config ()
 		return ACCEL_ERROR;
 	}
 
-	if (IMU_CONFIRM_REGS)
-	{
-		i2c_read_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL1_ADDR, initial, ACC_CONFIG_MSG_LEN, ACCEL_I2C_ADDR);
-	}
-
-	int ret =  i2c_write_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL1_ADDR, config, ACC_CONFIG_MSG_LEN, ACCEL_I2C_ADDR);
-
-	if (IMU_CONFIRM_REGS)
-	{
-		i2c_read_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL1_ADDR, initial, ACC_CONFIG_MSG_LEN, ACCEL_I2C_ADDR);
-	}
-	return ret;
+	return  i2c_write_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL1_ADDR, config, ACC_CONFIG_MSG_LEN, ACCEL_I2C_ADDR);	 
 }
 
 /**
@@ -111,37 +94,9 @@ int app_accel_config ()
  */
 void accel_trigger_enable(void)
 {
-
-#if (IMU_I2C_TRIGGER)
-	uint8_t initial = 0;
-	uint8_t config = 0x01; // i2c trigger
-
-	const struct device *const i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
-
-	if (!device_is_ready(i2c_dev))
-	{
-		LOG_ERR("Umable to enable IMU trigger - I2C device not ready");
-		return;
-	}
-
-	if (IMU_CONFIRM_REGS)
-	{
-		i2c_read_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL2_ADDR, &initial, sizeof(config), ACCEL_I2C_ADDR);
-	}
-
-	i2c_write_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL2_ADDR, &config, sizeof(config), ACCEL_I2C_ADDR);
-
-	if (IMU_CONFIRM_REGS)
-	{
-		i2c_read_bytes(i2c_dev, ACC_CONFIG_REGISTER_CNTRL2_ADDR, &initial, sizeof(config), ACCEL_I2C_ADDR);
-	}
-	return;
-#else
   //The trigger requires a transition from Low to High. Trigger by default and after execution will go to Low State.
   //Setting High
   set_imu_trigger_pin();
-
-#endif
 }
 
 /**
@@ -231,11 +186,10 @@ int app_accel_read(accel_data_t *accel_data)
 			}
 		}
 	}
-#if (!IMU_I2C_TRIGGER)
-		//Setting Low 
-		clear_imu_trigger_pin();
-#endif
-		return accel_error;
+
+	clear_imu_trigger_pin();
+
+	return accel_error;
 }
 
 #if (USE_ZEPHYR_SENSOR)

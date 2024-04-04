@@ -69,7 +69,8 @@ typedef enum
     COMMAND_TYPE_RESET,
     COMMAND_TYPE_DUMP,
     COMMAND_TYPE_PRESET,
-    COMMAND_TYPE_CLEAR
+    COMMAND_TYPE_CLEAR,
+    COMMAND_TYPE_TESTS
 }command_type_t;
 
 /**

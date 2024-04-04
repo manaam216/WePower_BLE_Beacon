@@ -40,24 +40,5 @@ static void indicate_i2c_fail_on_gpio()
  */
 void burn_the_energy(void)
 {
-
-#if USE_I2C_BURN_ENERGY
-	uint8_t config = VOLT_REGULATOR_CONFIG_DATA; // Reg 0x13, 0x20 enables switched aux out
-
-    nrfx_comp_stop();
-
-	// write to dev 0x1c, ISL9123 buck reg, register 0x13, one byte.
-
-	const struct device *const i2c_dev = DEVICE_DT_GET(DT_NODELABEL(i2c1));
-	if (!device_is_ready(i2c_dev)) 
-	{
-        indicate_i2c_fail_on_gpio();
-		return;
-	}
-
-	i2c_write_bytes(i2c_dev, VOLT_REGULATOR_CONFIG_REG_ADDR, &config, VOLT_REGULATOR_CONFIG_NUM_BYTES, VOLT_REGULATOR_I2C_ADDR);
-#endif
-
-clear_CN1_5();
-  
+	clear_CN1_5();
 }

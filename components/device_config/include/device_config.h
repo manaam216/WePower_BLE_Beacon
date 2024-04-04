@@ -4,18 +4,8 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 
-#define I2C_CONTIGOUS_WRITE     1       //< Enable I2C contigous write
-#define ALLOW_UART_ERROR        1       //< Allow Error to be sent to UART
-#define ALLOW_UART_DEBUG        1       //< Allow Debug to be sent to UART
-#define ENCR_KEY_IN_FRAM        0
-
-#define LOGS                    1       //< If printk doesn't handle it use if(LOGS) printk();
-
-#define VEXT10_PIN              3
-
 
 /**********   IMU CONFIGURATION     ********/
-#define IMU_CONFIRM_REGS    1
 #define IMU_DRDY_PIN    DT_GPIO_PIN(DT_NODELABEL(imu_drdy),gpios)
 #define IMU_TRIG_PIN    DT_GPIO_PIN(DT_NODELABEL(lis_trig),gpios)
 

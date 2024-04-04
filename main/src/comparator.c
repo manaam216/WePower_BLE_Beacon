@@ -137,3 +137,14 @@ void init_comparator_2_vbulk()
 
     nrfx_comp_start(NRFX_COMP_EVT_EN_DOWN_MASK,  0);
 }
+
+/**
+ * @brief Get the current value of the comparator 2
+ * 
+ * @return uint8_t read value at comparator 2
+ */
+uint8_t get_comaprator_2_current_value()
+{
+    init_comparator_2_vbulk();
+    return nrfx_comp_sample();
+}

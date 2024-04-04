@@ -542,6 +542,30 @@ static int clear_fram_handler(const struct shell *sh, size_t argc, char **argv)
 
 /****************************END OF CLEAR FUNCTIONS FOR FRAM FIELDS****************************/
 
+/******************************** TEST COMMAND FUNCTIONS **********************************/
+
+/**
+ * @brief Handler for receiving test commands
+ * 
+ * @param sh Shell object
+ * @param argc Size of the arguments
+ * @param argv Arguments, to be accessed as tokens
+ * @return int error code
+ */
+static int test_command_handler(const struct shell *sh, size_t argc, char **argv)
+{
+    memset(&command_data, 0, sizeof(command_data));
+
+    command_data.type = COMMAND_TYPE_TESTS;
+    command_data.field_index = atoi(argv[1]);
+
+    k_work_submit(&process_command_task);
+
+    return 0;
+}
+
+/****************************END OF TEST COMMAND FUNCTIONS ****************************/
+
 /**
  * @brief Initialize the command line interface for receiving commands via UART
  * 
@@ -574,8 +598,10 @@ uint8_t init_command_line_interface()
     SHELL_CMD_REGISTER(R, NULL, "Reset commands", reset_fram_handler);
     SHELL_CMD_REGISTER(p, NULL, "Preset commands", preset_fram_handler);
     SHELL_CMD_REGISTER(P, NULL, "Preset commands", preset_fram_handler);
-    SHELL_CMD_REGISTER(c, NULL, "Preset commands", clear_fram_handler);
-    SHELL_CMD_REGISTER(C, NULL, "Preset commands", clear_fram_handler);
+    SHELL_CMD_REGISTER(c, NULL, "Clear commands", clear_fram_handler);
+    SHELL_CMD_REGISTER(C, NULL, "Clear commands", clear_fram_handler);
+    SHELL_CMD_REGISTER(t, NULL, "Clear commands", test_command_handler);
+    SHELL_CMD_REGISTER(T, NULL, "Clear commands", test_command_handler);
 
     #if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_shell_uart), zephyr_cdc_acm_uart)
     const struct device *dev;

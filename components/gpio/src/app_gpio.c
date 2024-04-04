@@ -60,31 +60,13 @@ static const struct gpio_dt_spec tps_drdy = GPIO_DT_SPEC_GET(DT_NODELABEL(lps_dr
  */
 int init_we_power_board_gpios(void)
 {
-    #if (FORCE_TOGGLE)
-    gpio_pin_configure_dt(&polarity_pin, GPIO_OUTPUT);
-    gpio_pin_set_dt(&polarity_pin, 0);
-    #endif 
-
     gpio_pin_configure_dt(&imu_drdy, GPIO_INPUT);
     gpio_pin_configure_dt(&tps_drdy, GPIO_INPUT);
 
-    #if (!IMU_I2C_TRIGGER)
-        gpio_pin_configure_dt(&imu_trig, GPIO_OUTPUT);
-        clear_imu_trigger_pin();
-    #else
-        gpio_pin_configure_dt(&imu_trig, GPIO_INPUT);
-    #endif
+    gpio_pin_configure_dt(&imu_trig, GPIO_OUTPUT);
+    clear_imu_trigger_pin();
 
     gpio_pin_configure_dt(&polarity_pin, GPIO_INPUT | GPIO_PULL_UP);
-    //TODO: Do we really need this? Since this is comparator
-    nrf_gpio_cfg(VEXT10_PIN,  
-                 NRF_GPIO_PIN_DIR_INPUT, 
-                 NRF_GPIO_PIN_INPUT_CONNECT, 
-                 NRF_GPIO_PIN_PULLDOWN, 
-                 NRF_GPIO_PIN_S0S1, 
-                 NRF_GPIO_PIN_NOSENSE);
-    gpio_pin_configure_dt(&polarity_pin, GPIO_INPUT | GPIO_PULL_UP);
-
     set_CN1_5();
 
     gpio_pin_configure_dt(&connector_pin_4, GPIO_OUTPUT);

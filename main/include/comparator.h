@@ -20,4 +20,11 @@ uint8_t init_comparator_1_vext_and_read_value();
  */
 void init_comparator_2_vbulk();
 
+/**
+ * @brief Get the current value of the comparator 2
+ * 
+ * @return uint8_t read value at comparator 2
+ */
+uint8_t get_comaprator_2_current_value();
+
 #endif // __COMPARATOR__

@@ -24,34 +24,16 @@ int i2c_write_bytes(const struct device *i2c_dev, uint8_t addr, uint8_t *data, u
 {
 	struct i2c_msg msgs[2];
 
-	// /* Setup I2C messages */
-	if (!I2C_CONTIGOUS_WRITE) 
-	{
-		/* Send the address to write to */
-		msgs[0].buf = &addr;
-		msgs[0].len = 1U;
-		msgs[0].flags = I2C_MSG_WRITE;
+	uint8_t buf[64];
+	buf[0] = addr;
+	memcpy (&buf[1], data, num_bytes);
 
-		/* Data to be written, and STOP after this. */
-		msgs[1].buf = data;
-		msgs[1].len = num_bytes;
-		msgs[1].flags = I2C_MSG_WRITE | I2C_MSG_STOP;
+	/* Send the buffer to write to */
+	msgs[0].buf = buf;
+	msgs[0].len = num_bytes+1;
+	msgs[0].flags = I2C_MSG_WRITE;
 
-		return i2c_transfer(i2c_dev, &msgs[0], 2, devaddr7);
-	}
-	else
-	{
-		uint8_t buf[64];
-		buf[0] = addr;
-		memcpy (&buf[1], data, num_bytes);
-
-		/* Send the buffer to write to */
-		msgs[0].buf = buf;
-		msgs[0].len = num_bytes+1;
-		msgs[0].flags = I2C_MSG_WRITE;
-
-		return i2c_transfer(i2c_dev, &msgs[0], 1, devaddr7);
-	}
+	return i2c_transfer(i2c_dev, &msgs[0], 1, devaddr7);
 }
 
 /**

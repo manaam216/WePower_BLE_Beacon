@@ -735,6 +735,10 @@ void process_command_fn(struct k_work *work)
         LOG_INF( "Preset: P/p Command Received for type %d\n", command_data.field_index);
         handle_preset_commmand();
         break;
+    case COMMAND_TYPE_TESTS:
+        LOG_INF( "Running the test command received");
+        handle_tests_command(command_data.field_index);
+        break;
     default:
         break;
     }
