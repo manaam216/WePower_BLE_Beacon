@@ -585,7 +585,7 @@ static void handle_set_command()
     uint8_t encrypted_key_str[SIZE_OF_ENCRYPTED_KEY_STR] = {0};
     uint32_t field_data = 0;
 
-    switch (FRAM_INFO[command_data.field_index].type )
+    switch (FRAM_INFO[command_data.field_index].type)
     {
     case DATA_NUMBER:
         for (uint8_t command_data_idx = 0; 

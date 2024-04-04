@@ -252,6 +252,70 @@ static int set_sleep_time_before_polarity_detection_handler(const struct shell *
 }
 
 /**
+ * @brief set the Polarity method in FRAM
+ * 
+ * @param sh Shell object
+ * @param argc Size of the arguments
+ * @param argv Arguments, to be accessed as tokens
+ * @return int error code
+ */
+static int set_pol_method_handler(const struct shell *sh, size_t argc, char **argv)
+{
+    memset(&command_data,0, sizeof(command_data));
+    command_data.type = COMMAND_TYPE_SET;
+    command_data.field_index = atoi(argv[0]);
+    command_data.data[0] = (uint8_t)atoi(argv[1]);
+    command_data.data[1] = atoi(argv[1])>>8;
+
+    command_data.data_len = 2U; 
+
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= POL_METHOD_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
+    return 0;
+}
+
+/**
+ * @brief set the ISL9122 Volts in FRAM
+ * 
+ * @param sh Shell object
+ * @param argc Size of the arguments
+ * @param argv Arguments, to be accessed as tokens
+ * @return int error code
+ */
+static int set_isl9122_max_volts_handler(const struct shell *sh, size_t argc, char **argv)
+{
+    memset(&command_data,0, sizeof(command_data));
+    command_data.type = COMMAND_TYPE_SET;
+    command_data.field_index = atoi(argv[0]);
+    command_data.data[0] = (uint8_t)atoi(argv[1]);
+    command_data.data[1] = atoi(argv[1])>>8;
+
+    command_data.data_len = 2U; 
+
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= ISL9122_VOLTS_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
+    return 0;
+}
+
+/**
  * @brief set the encrypted key from FRAM
  * 
  * @param sh Shell object
@@ -493,8 +557,8 @@ uint8_t init_command_line_interface()
         SHELL_CMD(4, NULL, "set max number packets before repeat event.",set_max_number_of_packets_before_repeat_event_handler),
         SHELL_CMD(5, NULL, "set Sleep time between repeat events.",set_sleep_time_between_events_handler),
         SHELL_CMD(6, NULL, "set sleep time before polarity detection",set_sleep_time_before_polarity_detection_handler),
-        SHELL_CMD(7, NULL, "set RFU byte.", NULL),
-        SHELL_CMD(8, NULL, "set RFU byte.", NULL),
+        SHELL_CMD(7, NULL, "set RFU byte.", set_isl9122_max_volts_handler),
+        SHELL_CMD(8, NULL, "set RFU byte.", set_pol_method_handler),
         SHELL_CMD(9, NULL, "set Encrypted Key.",set_encrypted_key_handler),
         SHELL_CMD(10, NULL, "set TX power in 0.1 dbm.",set_tx_power_handler),
         SHELL_CMD(11, NULL, "set Device Name",set_device_name_handler),
