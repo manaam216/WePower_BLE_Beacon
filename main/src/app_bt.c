@@ -3,6 +3,9 @@
 #include <zephyr/logging/log.h>
 #include <stdlib.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/uuid.h>
+#include <zephyr/bluetooth/gatt.h>
 #include <hal/nrf_gpio.h>
 
 #include "config_commands.h"
@@ -20,17 +23,52 @@ LOG_MODULE_DECLARE(wepower);
 
 struct bt_le_adv_param adv_param =
 		BT_LE_ADV_PARAM_INIT(
-				     BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_IDENTITY | BT_LE_ADV_OPT_USE_NAME,
+				     BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_IDENTITY | BT_LE_ADV_OPT_USE_NAME | BT_LE_ADV_OPT_CONNECTABLE,
 				     BLE_ADV_INTERVAL_MIN,
 				     BLE_ADV_INTERVAL_MAX,
 				     NULL);
 
 static struct bt_data ad[] = 
 {
-	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
+	BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL,BT_LE_AD_NO_BREDR),
     BT_DATA(BT_DATA_MANUFACTURER_DATA, manufacture_data, PAYLOAD_FRAME_LENGTH),
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_BYTE1, BT_UUID_BYTE2)
 };
+
+
+/* Custom Service UUID */
+#define BT_UUID_CUSTOM_SERVICE  BT_UUID_DECLARE_16(0x1234)
+
+/* Custom Characteristic UUID */
+#define BT_UUID_CUSTOM_CHAR      BT_UUID_DECLARE_16(0x5678)
+
+static uint8_t custom_value = 0;
+
+/* Custom characteristic read callback */
+static ssize_t read_custom_value(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf, uint16_t len, uint16_t offset)
+{
+    const uint8_t *value = attr->user_data;
+    return bt_gatt_attr_read(conn, attr, buf, len, offset, value, sizeof(custom_value));
+}
+
+/* Custom characteristic write callback */
+static ssize_t write_custom_value(struct bt_conn *conn, const struct bt_gatt_attr *attr, const void *buf, uint16_t len, uint16_t offset, uint8_t flags)
+{
+    uint8_t *value = attr->user_data;
+
+    if (offset + len > sizeof(custom_value)) {
+        return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+    }
+
+    memcpy(value + offset, buf, len);
+    return len;
+}
+
+BT_GATT_SERVICE_DEFINE(custom_svc,
+    BT_GATT_PRIMARY_SERVICE(BT_UUID_CUSTOM_SERVICE),
+    BT_GATT_CHARACTERISTIC(BT_UUID_CUSTOM_CHAR, BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE, read_custom_value, write_custom_value, &custom_value)
+);
+
 
 static struct bt_le_ext_adv *ext_adv;
 
