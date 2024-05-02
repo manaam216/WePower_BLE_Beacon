@@ -20,21 +20,6 @@
 LOG_MODULE_DECLARE(wepower);
 
 /**
- * @brief Routine used to indicate I2C error on the GPIO pin
- * 
- */
-static void indicate_i2c_fail_on_gpio()
-{
-    uint8_t toggles = MAX_NUMBER_OF_TOGGLES_FOR_ERROR_INDICATION;
-    while (toggles--)
-	{ 
-        toggle_CN_1_5();
-	}
-    LOG_ERR("Burn Energy - I2C device is not ready");
-}
-
-
-/**
  * @brief Routine used to draw power to kill the energy
  * 
  */

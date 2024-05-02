@@ -22,10 +22,10 @@
 /*********** ERROR CONFIGURATION  ******************/
 #define ERROR_PIN                   CN1_4_PIN
 #define MAX_NUMBER_OF_TOGGLES_FOR_ERROR_INDICATION  100
-#define UART_ERROR_DELAY_MSEC       0
-#define FRAM_ERROR_DELAY_MSEC       1
-#define BT_ENABLE_ERROR_DELAY_MSEC  2
-#define BT_READY_ERROR_DELAY_MSEC   3 
+#define UART_ERROR_DELAY_MSEC       1
+#define FRAM_ERROR_DELAY_MSEC       2
+#define BT_ENABLE_ERROR_DELAY_MSEC  3
+#define BT_READY_ERROR_DELAY_MSEC   4 
 #define ERROR_MUTEX_WAIT_TIME_MSEC        K_MSEC(500)
 
 /******** PAYLOAD CONFIGURATION *******************/

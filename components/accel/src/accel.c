@@ -64,7 +64,6 @@ int app_accel_whoami()
  */
 int app_accel_config ()
 {
-	uint8_t initial[ACC_CONFIG_MSG_LEN];
 	uint8_t config[ACC_CONFIG_MSG_LEN] ;
 	// Reg 0x20 set mode to High-Performance / Low-Power mode 400/200 Hz 
 	// Single data conversion on demand mode (12/14-bit resolution) [shutdown until told to trigger]
