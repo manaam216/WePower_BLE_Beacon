@@ -1,0 +1,12 @@
+manifest:
+  remotes:
+    - name: nordic
+      url-base: https://github.com/nrfconnect
+  projects:
+    - name: sdk-nrf
+      path: nrf
+      remote: nordic
+      revision: e07558a7b967dc8ccc667fe025998907c1ebf424
+      import: true
+  self:
+    path: example-application
