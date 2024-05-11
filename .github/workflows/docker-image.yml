@@ -22,13 +22,9 @@ jobs:
       - name: Prepare west project
         run: |
           west init -l WePower_BLE_Beacon
-          west update -o=--depth=1 -n
       - name: Build firmware
         run: |
-          ls
-          cd ..
-          ls
-          west build --build-dir build_1 . --pristine --board wp_rev1 --no-sysbuild -- -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --force
+          west build --build-dir WePower_BLE_Beacon/build_1 WePower_BLE_Beacon --pristine --board wp_rev1 --no-sysbuild -- -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --force
       - name: Store hex files
         uses: actions/upload-artifact@v4
         with:
