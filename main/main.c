@@ -137,6 +137,8 @@ int main(void)
         }
         else
         {
+            disable_uart();
+
             // configure the IMU,
             app_accel_config();
 

@@ -3,7 +3,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/drivers/i2c.h>
+#include <zephyr/pm/device.h>
 #include <zephyr/init.h>
 #include <zephyr/drivers/uart.h>
 
@@ -239,6 +239,15 @@ int init_uart(void)
     LOG_INF("UART is initiated.\n");
 
     return 0;
+}
+
+/**
+ * @brief Disbale UART Peripheral explictly 
+ * 
+ */
+void disable_uart(void)
+{
+    pm_device_action_run(dev_uart, PM_DEVICE_ACTION_SUSPEND);
 }
 
 /**

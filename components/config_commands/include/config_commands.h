@@ -132,6 +132,12 @@ typedef struct
 int init_uart(void);
 
 /**
+ * @brief Disbale UART Peripheral explictly 
+ * 
+ */
+void disable_uart(void);
+
+/**
  * @brief Process Command function
  * 
  * @param work Work Item to process
