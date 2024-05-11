@@ -26,7 +26,7 @@ jobs:
       - name: Build firmware
         run: |
           ls
-          west build --build-dir build_1 --pristine --board wp_rev1 --no-sysbuild -- -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --force
+          west build --build-dir build_1 . --pristine --board wp_rev1 --no-sysbuild -- -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --force
       - name: Store hex files
         uses: actions/upload-artifact@v4
         with:
