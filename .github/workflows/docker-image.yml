@@ -19,7 +19,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: WePower_BLE_Beacon
-          fetch-depth: 0
       - name: Prepare west project       
         run: |
           west -v update
