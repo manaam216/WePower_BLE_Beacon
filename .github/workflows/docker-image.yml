@@ -22,8 +22,7 @@ jobs:
       - name: Build firmware
         working-directory: example-application
         run: |
-          export ZEPHYR_BASE=/opt/nordic/ncs/v2.0.0/zephyr
-          west build
+          west build --build-dir example-application/build_1 example-application --pristine --board wp_rev1 --no-sysbuild -- -DNCS_TOOLCHAIN_VERSION=NONE -DBOARD_ROOT=example-application -DCACHED_CONF_FILE=example-application/prj.conf
       - name: Store hex files
         uses: actions/upload-artifact@v4
         with:
