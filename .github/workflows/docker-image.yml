@@ -22,6 +22,7 @@ jobs:
       - name: Build firmware
         working-directory: example-application
         run: |
+          export ZEPHYR_BASE=/opt/nordic/ncs/v2.0.0/zephyr
           west build
       - name: Store hex files
         uses: actions/upload-artifact@v4
