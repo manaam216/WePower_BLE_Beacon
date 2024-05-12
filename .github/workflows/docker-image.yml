@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-test-in-docker:
     runs-on: ubuntu-22.04
-    container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v2.6.1
+    container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v2.6.99
     defaults:
       run:
         # Bash shell is needed to set toolchain related environment variables in docker container
@@ -24,7 +24,6 @@ jobs:
           path: WePower_BLE_Beacon
       - name: Prepare west project       
         run: |
-          pip3 install --user west
           ls
           export PATH=$PATH:${HOME}/.local/bin
           west init -l WePower_BLE_Beacon
