@@ -3,6 +3,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(version_2)
 
+set(BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "" FORCE)
+
 target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/components)
 add_subdirectory(components/device_config)
 add_subdirectory(components/i2c_sensors)
