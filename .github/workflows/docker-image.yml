@@ -24,6 +24,7 @@ jobs:
           path: WePower_BLE_Beacon
       - name: Prepare west project       
         run: |
+          export PATH=$PATH:${HOME}/.local/bin
           west init -l WePower_BLE_Beacon
           west update -o=--depth=1 -n
           apt-get -y update
