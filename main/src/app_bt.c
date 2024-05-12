@@ -42,13 +42,15 @@ static struct bt_data ad[] =
 /* Custom Characteristic UUID */
 #define BT_UUID_CUSTOM_CHAR      BT_UUID_DECLARE_16(0x5678)
 
-static uint8_t custom_value = 0;
+static uint8_t custom_value[10240] = {22};
+
 
 /* Custom characteristic read callback */
 static ssize_t read_custom_value(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf, uint16_t len, uint16_t offset)
 {
-    const uint8_t *value = attr->user_data;
-    return bt_gatt_attr_read(conn, attr, buf, len, offset, value, sizeof(custom_value));
+    uint8_t *value = attr->user_data;
+    value[0] = len;
+    return bt_gatt_attr_read(conn, attr, buf, 10240, offset, value, sizeof(custom_value));
 }
 
 /* Custom characteristic write callback */
@@ -97,7 +99,8 @@ static int create_advertising(void)
 {
 	return bt_le_ext_adv_create(&adv_param, &adv_callback, &ext_adv);
 }
-
+uint64_t idx = 0;
+uint8_t value_to_write = 0;
 /**
  * @brief Function used to start the advertising on Bluetooth
  * 
@@ -127,6 +130,24 @@ void start_advertising_handler(struct k_work *work)
     {
 		LOG_ERR("Failed to start advertising set \n");
 	}
+
+    idx++;
+    custom_value[idx] = value_to_write;
+
+    custom_value[10239]=0xBe;
+ custom_value[10238]=0xdf;
+
+    if (idx >1050)
+    {
+        idx = 0;
+    }
+
+    if (value_to_write >250)
+    {
+        value_to_write = 0;
+    }
+    value_to_write++;
+    
 }
 
 /**
