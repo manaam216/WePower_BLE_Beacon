@@ -7,6 +7,6 @@ manifest:
       path: nrf
       remote: nordic
       revision: e07558a7b967dc8ccc667fe025998907c1ebf424
-      import: true
+      import: false
   self:
     path: WePower_BLE_Beacon
