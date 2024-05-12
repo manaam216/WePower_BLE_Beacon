@@ -29,7 +29,7 @@ jobs:
       - name: Build firmware
         run: |
           cd WePower_BLE_Beacon
-          west build --build-dir build_1 . --pristine -DBOARD_ROOT=. -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --board wp_rev1
+          west build --build-dir build . --pristine -DBOARD_ROOT=. -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --board wp_rev1
       - name: Store hex files
         uses: actions/upload-artifact@v4
         with:
