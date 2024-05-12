@@ -1,6 +1,6 @@
 #include "comparator.h"
 
-#include <zephyr\kernel.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <nrfx_comp.h>
 

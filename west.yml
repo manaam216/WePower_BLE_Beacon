@@ -1,0 +1,12 @@
+manifest:
+  remotes:
+    - name: nordic
+      url-base: https://github.com/nrfconnect
+  projects:
+    - name: sdk-nrf
+      path: nrf
+      remote: nordic
+      revision: 0677b0991e4c3ea58efd14e9e33b6c29a1919113
+      import: true
+  self:
+    path: WePower_BLE_Beacon
