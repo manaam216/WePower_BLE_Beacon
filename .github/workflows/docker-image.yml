@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build-and-test-in-docker:
+  build-wepower-project:
     runs-on: ubuntu-22.04
     container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v2.6.99
     defaults:
@@ -15,13 +15,12 @@ jobs:
         # It is a workaround for GitHub Actions limitation https://github.com/actions/runner/issues/1964
         shell: bash
     steps:
-      - name: Checkout repository with example application
+      - name: Checkout repository with BLE Beacon application
         uses: actions/checkout@v4
         with:
           path: WePower_BLE_Beacon
       - name: Prepare west project       
         run: |
-          ls
           export PATH=$PATH:${HOME}/.local/bin
           west init -l WePower_BLE_Beacon
           west update -o=--depth=1 -n
@@ -29,11 +28,10 @@ jobs:
           apt-get -y install build-essential
       - name: Build firmware
         run: |
-          ls
           cd WePower_BLE_Beacon
           west build --build-dir build_1 . --pristine -DBOARD_ROOT=. -DNCS_TOOLCHAIN_VERSION=NONE  -DCACHED_CONF_FILE=prj.conf --board wp_rev1
       - name: Store hex files
         uses: actions/upload-artifact@v4
         with:
           name: built-applications
-          path: WePower_BLE_Beacon/twister-out/**/zephyr/zephyr.hex
+          path: WePower_BLE_Beacon/build/zephyr/WePower_BLE_BEACON.hex
