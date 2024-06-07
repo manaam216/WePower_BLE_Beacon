@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include "app_types.h"
 
-extern bool is_temp_pressure_sensor_triggered; 
-
 /**
  * @brief Routine used to measure the sensors data and store it in the buffer
  * 

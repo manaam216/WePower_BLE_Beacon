@@ -75,7 +75,7 @@ void update_manufacture_data(void)
 		case DATA_TYPE_SENSOR_DATA_0:
 		case DATA_TYPE_SENSOR_DATA_1:
 		case DATA_TYPE_SENSOR_DATA_2:
-			measure_sensor_data(&we_power_data);
+			// measure_sensor_data(&we_power_data);
 			break;
 
 		case DATA_TYPE_POLARITY_AND_NAME_9_BYTES: 

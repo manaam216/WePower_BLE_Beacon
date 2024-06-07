@@ -2,6 +2,18 @@
 #define __ACCEL__
 
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/i2c.h>
+
+#include "app_types.h"
+#include "i2c_sensors.h"
+#include "device_config.h"
+#include "config_commands.h"
+#include "app_gpio.h"
 
 #define ACCEL_I2C_ADDR (0x19)
 
@@ -47,14 +59,14 @@ void accel_trigger_enable(void);
  */
 int app_accel_read(accel_data_t *accel_data);
 
-#if (USE_ZEPHYR_SENSOR)
 /**
- * @brief Read Accelerometer data using Zephyr APIs
+ * @brief Accelerometer configuration for the FIFO buffer
  * 
- * @param accel_data Buffer to store read data
- * @return int Error code
+ * @return int error code
  */
-int app_accel_service(accel_data_t *accel_data);
-#endif
+int app_accel_config_use_fifo_buffer();
+
+void test_read();
+void accel_int2_interrupt(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
 
 #endif // __ACCEL__

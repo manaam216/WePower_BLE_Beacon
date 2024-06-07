@@ -1,7 +1,6 @@
 #include "app_gpio.h"
 #include <zephyr/kernel.h>
 #include <hal/nrf_gpio.h>
-#include "zephyr/drivers/gpio.h"
 
 #include "device_config.h"
 
@@ -15,7 +14,7 @@ static const struct gpio_dt_spec imu_trig    = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELA
  * @brief Device tree specification for IMU data ready pin GPIO
  * 
  */
-static const struct gpio_dt_spec imu_drdy    = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(imu_drdy),gpios,0);
+static const struct gpio_dt_spec imu_int2    = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(imu_int2),gpios,0);
 
 /**
  * @brief Device tree specification for polarity pin GPIO
@@ -60,11 +59,10 @@ static const struct gpio_dt_spec tps_drdy = GPIO_DT_SPEC_GET(DT_NODELABEL(lps_dr
  */
 int init_we_power_board_gpios(void)
 {
-    gpio_pin_configure_dt(&imu_drdy, GPIO_INPUT);
     gpio_pin_configure_dt(&tps_drdy, GPIO_INPUT);
 
-    gpio_pin_configure_dt(&imu_trig, GPIO_OUTPUT);
-    clear_imu_trigger_pin();
+    // gpio_pin_configure_dt(&imu_trig, GPIO_OUTPUT);
+    // clear_imu_trigger_pin();
 
     gpio_pin_configure_dt(&polarity_pin, GPIO_INPUT | GPIO_PULL_UP);
     set_CN1_5();
@@ -235,9 +233,9 @@ void clear_imu_trigger_pin()
  * 
  * @return uint8_t Current status of the DRDY pin of IMU
  */
-uint8_t get_imu_drdy_pin_status()
+uint8_t get_imu_int2_pin_status()
 {
-    return gpio_pin_get_dt(&imu_drdy);
+    return gpio_pin_get_dt(&imu_int2);
 }
 
 /**
@@ -248,4 +246,85 @@ uint8_t get_imu_drdy_pin_status()
 uint8_t get_tps_drdy_pin_status()
 {
     return gpio_pin_get_dt(&tps_drdy);
+}
+
+/**
+ * @brief Configure GPIO interrupt for specified pin
+ * 
+ * @param gpio GPIO to configure the interrupt for
+ * @param gpio_interrupt_callback Callback function for GPIO interrupt
+ */
+void configure_interrupt_for_gpio_pin(const struct gpio_dt_spec gpio, gpio_intr_cb_ptr gpio_interrupt_callback)
+{
+    int ret = 0;
+    struct gpio_callback gpio_int_cb_data;
+    ret = gpio_pin_configure_dt(&gpio, GPIO_INPUT);
+	if (ret != 0) {
+		printk("Error %d: failed to configure %s pin %d\n",
+		       ret, gpio.port->name, gpio.pin);
+		return;
+	}
+
+    
+    ret = gpio_pin_interrupt_configure_dt(&gpio,
+					      GPIO_INT_EDGE_TO_ACTIVE);
+	if (ret != 0) {
+		printk("Error %d: failed to configure interrupt on %s pin %d\n",
+			ret, gpio.port->name, gpio.pin);
+		return;
+	}
+
+    gpio_init_callback(&gpio_int_cb_data, *gpio_interrupt_callback, BIT(gpio.pin));
+	
+	gpio_add_callback(gpio.port, &gpio_int_cb_data);
+	printk("Set up interrupt at %s pin %d\n", gpio.port->name, gpio.pin);
+}
+
+/**
+ * @brief Configure the interurpt for INT2 pin of accelerometer
+ * 
+ * @param int2_cb Callback function for GPIO
+ */
+void configure_interrupt_for_accel_int2_pin(gpio_intr_cb_ptr int2_cb)
+{
+    configure_interrupt_for_gpio_pin(imu_int2, int2_cb);
+    disable_accel_int2_interrupts();
+}
+
+/**
+ * @brief Disbale interrupt for a specific GPIO pin
+ * 
+ * @param gpio GPIO pin to disable interrupt for 
+ */
+void disable_pin_interrupts(const struct gpio_dt_spec gpio)
+{
+    gpio_pin_interrupt_configure_dt(&gpio, GPIO_INT_DISABLE); 
+}
+
+/**
+ * @brief Disable accelerometer INT2 interrupts
+ * 
+ */
+void disable_accel_int2_interrupts()
+{
+    disable_pin_interrupts(imu_int2);
+}
+
+/**
+ * @brief Enable interrupt for a specific GPIO pin
+ * 
+ * @param gpio GPIO pin to enable interrupt for 
+ */
+void enable_pin_interrupts(const struct gpio_dt_spec gpio)
+{
+    gpio_pin_interrupt_configure_dt(&gpio, GPIO_INT_ENABLE); 
+}
+
+/**
+ * @brief Enable accelerometer interrupts
+ *  
+ */
+void enable_accel_int2_interrupts()
+{
+    disable_pin_interrupts(imu_int2);
 }

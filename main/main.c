@@ -6,7 +6,6 @@
 #include "fram.h"
 #include "encrypt.h"
 #include "accel.h"
-#include "temp_pressure.h"
 #include "config_commands.h"
 #include "i2c_sensors.h"
 #include "device_config.h"
@@ -30,9 +29,6 @@ static struct k_work_delayable update_frame_work;
 
 // task to run config_commands.c module
 struct k_work process_command_task;
-
-// used to tell if the pressure sensor was properly triggered
-extern bool is_temp_pressure_sensor_triggered;
 
 /**
  * @brief 20ms packet timer callback, sends work until max packets. Starts inter-event sleep if there is a next event.
@@ -137,24 +133,15 @@ int main(void)
         }
         else
         {
-            disable_uart();
-
-            // configure the IMU,
-            app_accel_config();
-
-            // pressure sensor config.  
-            enable_temp_pressure_sensor_interrupt_config ();
+            // disable_uart();
             
-            // To save time later, start it early
-            if (TEMP_PRESSURE_SUCCESS == app_temp_pressure_trigger())
-            {
-                is_temp_pressure_sensor_triggered = true;
-            }
-            else
-            {
-                is_temp_pressure_sensor_triggered = false;
-            }
-                
+            // configure the IMU,
+            
+             
+            app_accel_config_use_fifo_buffer();
+app_accel_config();     
+
+// test_read();
             /**
              * @brief Read FRAM and act accordingly.
              * 
@@ -177,7 +164,7 @@ int main(void)
                 burn_the_energy();
             }
         
-            (void)initialize_bluetooth();	
+            // (void)initialize_bluetooth();	
 
             update_manufacture_data();
 
@@ -190,14 +177,17 @@ int main(void)
             k_work_init_delayable(&update_frame_work, update_frame_work_fn);
 
             // Trigger the 20ms timer to start advertising 
-            k_timer_start(&timer_event, K_MSEC(fram_data.packet_interval), K_MSEC(fram_data.packet_interval));
+            // k_timer_start(&timer_event, K_MSEC(fram_data.packet_interval), K_MSEC(fram_data.packet_interval));
 
             // so we don't wait 20ms, send first packet right now.
             toggle_CN_1_6();
-            k_work_submit(&start_advertising_work_item);// submit the first packet to start advertising instantly
+            // k_work_submit(&start_advertising_work_item);// submit the first packet to start advertising instantly
         }
-            
+        configure_interrupt_for_accel_int2_pin(accel_int2_interrupt);
+            enable_accel_int2_interrupts();
+            test_read();
         while (1) 
-            k_msleep (10);  // supposedly this can end but ending main() seems wrong.
+            {printk("\r get_imu_int2_pin_status  %d \n\n\n",get_imu_int2_pin_status());
+            k_msleep (10000); } // supposedly this can end but ending main() seems wrong.
         return -1;
 }

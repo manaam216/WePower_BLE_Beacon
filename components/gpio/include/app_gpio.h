@@ -2,6 +2,9 @@
 #define __APP_GPIO__
 
 #include <stdint.h>
+#include "zephyr/drivers/gpio.h"
+
+typedef void (*gpio_intr_cb_ptr)(const struct device*, struct gpio_callback*, uint32_t );
 
 /**
  * @brief Initialize the GPIOs of the WePower Board
@@ -63,7 +66,7 @@ void set_imu_trigger_pin();
  * 
  * @return uint8_t Current status of the DRDY pin of IMU
  */
-uint8_t get_imu_drdy_pin_status();
+uint8_t get_imu_int2_pin_status();
 
 /**
  * @brief Get the temperature and presseure sensor drdy pin status
@@ -119,5 +122,46 @@ void clear_CN1_4();
  * 
  */
 void set_CN1_4();
+
+/**
+ * @brief Configure the interurpt for INT2 pin of accelerometer
+ * 
+ * @param int2_cb Callback function for GPIO
+ */
+void configure_interrupt_for_accel_int2_pin(gpio_intr_cb_ptr int2_cb);
+
+/**
+ * @brief Configure GPIO interrupt for specified pin
+ * 
+ * @param gpio GPIO to configure the interrupt for
+ * @param gpio_interrupt_callback Callback function for GPIO interrupt
+ */
+void configure_interrupt_for_gpio_pin(const struct gpio_dt_spec gpio, gpio_intr_cb_ptr gpio_interrupt_callback);
+
+/**
+ * @brief Enable accelerometer interrupts
+ * 
+ */
+void enable_accel_int2_interrupts();
+
+/**
+ * @brief Enable interrupt for a specific GPIO pin
+ * 
+ * @param gpio GPIO pin to enable interrupt for 
+ */
+void enable_pin_interrupts(const struct gpio_dt_spec gpio);
+
+/**
+ * @brief Disable accelerometer INT2 interrupts
+ * 
+ */
+void disable_accel_int2_interrupts();
+
+/**
+ * @brief Disbale interrupt for a specific GPIO pin
+ * 
+ * @param gpio GPIO pin to disable interrupt for 
+ */
+void disable_pin_interrupts(const struct gpio_dt_spec gpio);
 
 #endif // __APP_GPIO__

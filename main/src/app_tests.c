@@ -2,7 +2,6 @@
 #include <zephyr/logging/log.h>
 
 #include "fram.h"
-#include "temp_pressure.h"
 #include "accel.h"
 #include "comparator.h"
 
@@ -51,9 +50,9 @@ static void handle_fram_test_command()
  */
 static void handle_temperature_pressure_test_command()
 {
-    temp_pressure_data_t temp_pressure_data = {0};
-    app_temp_pressure_trigger();
-    app_temp_pressure_read(&temp_pressure_data);
+    // temp_pressure_data_t temp_pressure_data = {0};
+    // app_temp_pressure_trigger();
+    // app_temp_pressure_read(&temp_pressure_data);
 }
 
 /**

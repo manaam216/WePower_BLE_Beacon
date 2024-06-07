@@ -6,7 +6,7 @@
 
 
 /**********   IMU CONFIGURATION     ********/
-#define IMU_DRDY_PIN    DT_GPIO_PIN(DT_NODELABEL(imu_drdy),gpios)
+#define imu_int2_PIN    DT_GPIO_PIN(DT_NODELABEL(imu_int2),gpios)
 #define IMU_TRIG_PIN    DT_GPIO_PIN(DT_NODELABEL(lis_trig),gpios)
 
 /**********  TEMP PRESSURE CONFIG  *********/

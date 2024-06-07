@@ -199,7 +199,7 @@
 
 	gpio_input {
 		compatible = "gpio-keys";
-		imu_drdy: imu_drdy_pin {
+		imu_int2: imu_drdy_pin {
 			gpios = <&gpio1 12 0x0>;
 			label = "IMU DRDY";
 		};
