@@ -19,7 +19,6 @@
 		zephyr,code-partition = &slot0_partition;
         zephyr,entropy = &rng;
         zephyr,i2c = &i2c0;
-		zephyr,i2c1 = &i2c1;
 		nrf,gpio0 = &gpio0;
 		nrf,gpio1 = &gpio1;
 		nrf,gpiote = &gpiote;
@@ -27,7 +26,7 @@
 	};
 
 	zephyr,user {
-		io-channels = <&comp 1>, <&comp 2>;
+		io-channels = <&comp 1>, <&comp 2>, <&comp 4>, <&comp 7>;
 	};
 };
 
@@ -56,18 +55,6 @@
 	i2c0_sleep: i2c0_sleep {
 		group1 {
             psels = <NRF_PSEL(TWIM_SDA, 0, 29)>, <NRF_PSEL(TWIM_SCL, 0, 30)>;
-		};
-	};
-
-	i2c1_default: i2c1_default {
-		group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 16)>, <NRF_PSEL(TWIM_SCL, 0, 15)>;
-		};
-	};
-
-	i2c1_sleep: i2c1_sleep {
-		group1 {
-            psels = <NRF_PSEL(TWIM_SDA, 0, 16)>, <NRF_PSEL(TWIM_SCL, 0, 15)>;
 		};
 	};
 };
@@ -157,16 +144,6 @@
     clock-frequency = <I2C_BITRATE_FAST>;
 	pinctrl-0 = <&i2c0_default>;
 	pinctrl-1 = <&i2c0_sleep>;
-	pinctrl-names = "default", "sleep";
-	zephyr,concat-buf-size = <32>;	
-};
-
-&i2c1 {
-	compatible = "nordic,nrf-twim";
-	status = "okay";
-    clock-frequency = <I2C_BITRATE_FAST>;
-	pinctrl-0 = <&i2c1_default>;
-	pinctrl-1 = <&i2c1_sleep>;
 	pinctrl-names = "default", "sleep";
 	zephyr,concat-buf-size = <32>;	
 };

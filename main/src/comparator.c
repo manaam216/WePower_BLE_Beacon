@@ -148,3 +148,16 @@ uint8_t get_comaprator_2_current_value()
     init_comparator_2_vbulk();
     return nrfx_comp_sample();
 }
+
+uint8_t init_differential_comparator()
+{
+    nrfx_comp_config_t  comp_config = NRFX_COMP_DEFAULT_CONFIG(AIN_POS_CHANNEL_FOR_DIFF_COMPARATOR);
+    // comp_config.reference = NRF_COMP_REF_Int1V2; 
+    comp_config.main_mode = COMP_MODE_MAIN_Diff;
+    comp_config.ext_ref = AIN_NEG_CHANNEL_FOR_DIFF_COMPARATOR;
+    comp_config.speed_mode = COMP_MODE_SP_Low;
+    nrfx_comp_init(&comp_config, NULL);
+	nrfx_comp_start(0,  0);
+
+    return nrfx_comp_sample();
+}
