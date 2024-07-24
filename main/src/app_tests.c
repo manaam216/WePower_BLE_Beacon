@@ -5,11 +5,17 @@
 #include "temp_pressure.h"
 #include "accel.h"
 #include "comparator.h"
+#include "app_bt.h"
+#include "app_manuf_data.h"
 
 #define FRAM_TEST_VALUE 33
 #define FRAM_TEST_INDEX 4
 
+#define MAX_TEST_BLE_BEACONS_TO_SEND    1000
+
 LOG_MODULE_DECLARE(wepower);
+
+uint32_t number_of_ble_beacons_sent = 0;
 
 typedef enum
 {
@@ -17,7 +23,24 @@ typedef enum
     TEST_TEMP_PRESSURE = 2,
     TEST_ACCELEROMETER = 3,
     TEST_COMPARATOR    = 4,
+    TEST_BLE_BEACON    = 5
 }hw_tests_t;
+
+static void test_timer_event_handler(struct k_timer *timer_handler)
+{
+    number_of_ble_beacons_sent++;
+    if (number_of_ble_beacons_sent <= MAX_TEST_BLE_BEACONS_TO_SEND )
+    {
+        k_work_submit(&start_advertising_work_item);
+    }
+    else
+    {
+        k_timer_stop(timer_handler);
+    }
+    
+}
+
+K_TIMER_DEFINE(test_timer_event, test_timer_event_handler, NULL);
 
 /**
  * @brief Handle the command to run the test for FRAM
@@ -70,7 +93,7 @@ static void handle_accelerometer_test_command()
 }
 
 /**
- * @brief Handle the command to run the test for IMU
+ * @brief Handle the command to run the test for comparator
  * 
  */
 static void handle_comparator_test_command()
@@ -79,6 +102,25 @@ static void handle_comparator_test_command()
     LOG_RAW("Read Comparator 1 value %d", comparator_sample_value);
     comparator_sample_value = get_comaprator_2_current_value();
     LOG_RAW("Read Comparator 2 value %d", comparator_sample_value);
+    comparator_sample_value = init_differential_comparator();
+    LOG_RAW("Read Differential Comparator value %d", comparator_sample_value);
+}
+
+static void handle_ble_beacon_test_command()
+{
+    initialize_bluetooth();
+
+    update_manufacture_data();
+
+    // Initialize a work item to trigger BLE advertising for each event
+    k_work_init(&start_advertising_work_item, start_advertising_handler);
+
+    number_of_ble_beacons_sent = 0;
+
+    k_timer_start(&test_timer_event, K_MSEC(20), K_MSEC(20));
+
+    k_work_submit(&start_advertising_work_item);
+    
 }
 
 /**
@@ -108,6 +150,11 @@ void handle_tests_command(uint8_t received_test_number)
         case TEST_COMPARATOR:
         {
             handle_comparator_test_command();
+            break;
+        }
+        case TEST_BLE_BEACON:
+        {
+            handle_ble_beacon_test_command();
             break;
         }
     default:
