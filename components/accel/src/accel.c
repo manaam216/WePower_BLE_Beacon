@@ -31,14 +31,16 @@ LOG_MODULE_DECLARE(wepower);
 struct k_work accelerometer_fifo_evt_work_item;
 
 accel_data_t temp_buffer_for_fifo[32];
-accel_data_t temp_buf;
+accel_data_t temp_buf = {0};
 
 void test_read()
 {
 	for (uint8_t i = 0; i < 32; i++)
 	{
 		app_accel_read(&temp_buf);
+		LOG_HEXDUMP_INF(&temp_buf, sizeof(temp_buf),"ACCEL temp_buf");
 		memcpy((&temp_buffer_for_fifo)+i, &temp_buf,sizeof(temp_buf));
+		memset(&temp_buf,0,sizeof(temp_buf));
 	}
 	LOG_HEXDUMP_INF(temp_buffer_for_fifo, sizeof(temp_buffer_for_fifo),"ACCEL Data");
 }
@@ -99,6 +101,7 @@ int app_accel_whoami()
 int app_accel_config_use_fifo_buffer()
 {
 	uint8_t config;
+	// uint8_t config2 =0;
 	int ret = 0;
 
 	//FIFO mode - continous , Threshold Setting 31 ( 31 values )
@@ -115,6 +118,12 @@ int app_accel_config_use_fifo_buffer()
 	{
 		printf("\rHERE \n\n");
 		ret = i2c_write_bytes(i2c_dev, ACC_CONFIG_REGISTER_FIFO_CNTRL_ADDR, &config, ACC_FIFO_CONFIG_MSG_LEN, ACCEL_I2C_ADDR);
+
+		// ret = i2c_read_bytes(i2c_dev, ACC_CONFIG_REGISTER_FIFO_CNTRL_ADDR, &config2, ACC_FIFO_CONFIG_MSG_LEN, ACCEL_I2C_ADDR);
+		// if (ret == ACCEL_SUCCESS) 
+		// {
+		// 	printf("\rHERE  %d\n\n",config2 );
+		// }
 	}
 	
 	return ret;

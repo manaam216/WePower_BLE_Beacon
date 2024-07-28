@@ -141,7 +141,7 @@ int main(void)
             app_accel_config_use_fifo_buffer();
 app_accel_config();     
 
-// test_read();
+test_read();
             /**
              * @brief Read FRAM and act accordingly.
              * 
@@ -184,7 +184,7 @@ app_accel_config();
             // k_work_submit(&start_advertising_work_item);// submit the first packet to start advertising instantly
         }
         configure_interrupt_for_accel_int2_pin(accel_int2_interrupt);
-            enable_accel_int2_interrupts();
+            // disable_accel_int2_interrupts();
             test_read();
         while (1) 
             {printk("\r get_imu_int2_pin_status  %d \n\n\n",get_imu_int2_pin_status());

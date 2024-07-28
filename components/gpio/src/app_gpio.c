@@ -288,7 +288,7 @@ void configure_interrupt_for_gpio_pin(const struct gpio_dt_spec gpio, gpio_intr_
 void configure_interrupt_for_accel_int2_pin(gpio_intr_cb_ptr int2_cb)
 {
     configure_interrupt_for_gpio_pin(imu_int2, int2_cb);
-    disable_accel_int2_interrupts();
+    // disable_accel_int2_interrupts();
 }
 
 /**
@@ -326,5 +326,5 @@ void enable_pin_interrupts(const struct gpio_dt_spec gpio)
  */
 void enable_accel_int2_interrupts()
 {
-    disable_pin_interrupts(imu_int2);
+    enable_pin_interrupts(imu_int2);
 }
