@@ -68,5 +68,11 @@ int app_accel_config_use_fifo_buffer();
 
 void test_read();
 void accel_int2_interrupt(const struct device *dev, struct gpio_callback *cb, uint32_t pins);
+/**
+ * @brief Accelerometer configuration for the FIFO buffer
+ * 
+ * @return int error code
+ */
+int app_accel_config_not_use_fifo_buffer();
 
 #endif // __ACCEL__

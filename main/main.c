@@ -183,11 +183,17 @@ test_read();
             toggle_CN_1_6();
             // k_work_submit(&start_advertising_work_item);// submit the first packet to start advertising instantly
         }
-        configure_interrupt_for_accel_int2_pin(accel_int2_interrupt);
+        configure_interrupt_for_accel_int2_pin(&accel_int2_interrupt);
             // disable_accel_int2_interrupts();
             test_read();
+            app_accel_config_not_use_fifo_buffer();
+            test_read();
+             app_accel_config_use_fifo_buffer();
+             k_msleep (1000);
+             test_read();
         while (1) 
-            {printk("\r get_imu_int2_pin_status  %d \n\n\n",get_imu_int2_pin_status());
+            {
+                // printk("\r get_imu_int2_pin_status  %d \n\n\n",get_imu_int2_pin_status());
             k_msleep (10000); } // supposedly this can end but ending main() seems wrong.
         return -1;
 }
