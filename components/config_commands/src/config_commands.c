@@ -13,6 +13,8 @@
 #define SIZE_OF_ENCRYPTED_KEY_STR   (3 * ENCRYPTED_KEY_NUM_BYTES) + 1
 #define NUMBER_OF_BITS_IN_A_BYTE    8
 
+#define DEFAULT_POLARITY_EVT_CTR_VALUE  0
+
 #define PRESET0_DEFAULT_EVT_COUNTER         0
 #define PRESET0_DEFAULT_SERIAL_NUM          1
 #define PRESET0_DEFAULT_TYPE                0
@@ -116,7 +118,9 @@ const fram_info_t FRAM_INFO[MAX_FRAM_FIELDS] =
     {"unused",                  DATA_NUMBER, POL_MET_NUM_BYTES,      POL_METHOD_MIN_VALUE, POL_METHOD_MAX_VALUE, POL_METHOD_DEFAULT_VALUE},
     {"ENCRYPTED KEY",       DATA_BYTE_ARRAY, ENCRYPTED_KEY_NUM_BYTES, 0, 0,0}, // Since this is a byte array, mix max values do not matter
     {"TX dBm 10 (R.F.U.)",      DATA_NUMBER, TX_DBM_NUM_BYTES,       TX_POWER_MIN_VALUE, TX_POWER_MAX_VALUE, TX_POWER_DEFAULT_VALUE},
-    {"Device NAME",             DATA_STRING, NAME_NUM_BYTES,         0, 0,0} // Since this is astring, max and min values do not matter
+    {"Device NAME",             DATA_STRING, NAME_NUM_BYTES,         0, 0,0}, // Since this is astring, max and min values do not matter
+    {"NEG EVT CTR",             DATA_NUMBER, NEG_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
+    {"POS EVT CTR",             DATA_NUMBER, POS_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
 };
 
 /**
@@ -136,7 +140,9 @@ static fram_data_t Preset0 =
     PRESET0_DEFAULT_POL_METHOD,
     PRESET0_DEFAULT_ENCRYPT_KEY,
     PRESET0_DEFAULT_TX_POWER,
-    PRESET0_DEFAULT_NAME
+    PRESET0_DEFAULT_NAME,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
 /**
@@ -156,7 +162,9 @@ static fram_data_t Preset1 =
     PRESET1_DEFAULT_POL_METHOD,
     PRESET1_DEFAULT_ENCRYPT_KEY,
     PRESET1_DEFAULT_TX_POWER,
-    PRESET1_DEFAULT_NAME
+    PRESET1_DEFAULT_NAME,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
  /**
@@ -176,7 +184,9 @@ static fram_data_t Preset2 =
     PRESET2_DEFAULT_POL_METHOD,
     PRESET2_DEFAULT_ENCRYPT_KEY,
     PRESET2_DEFAULT_TX_POWER,
-    PRESET2_DEFAULT_NAME
+    PRESET2_DEFAULT_NAME,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
  /**
@@ -196,7 +206,9 @@ static fram_data_t Preset3 =
     PRESET3_DEFAULT_POL_METHOD,
     PRESET3_DEFAULT_ENCRYPT_KEY,
     PRESET3_DEFAULT_TX_POWER,
-    PRESET3_DEFAULT_NAME
+    PRESET3_DEFAULT_NAME,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
  /**
@@ -216,7 +228,9 @@ static fram_data_t Preset4 =
     PRESET4_DEFAULT_POL_METHOD,
     PRESET4_DEFAULT_ENCRYPT_KEY,
     PRESET4_DEFAULT_TX_POWER,
-    PRESET4_DEFAULT_NAME
+    PRESET4_DEFAULT_NAME,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
 /**
@@ -273,6 +287,8 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(ENCRYPTED_KEY, (uint8_t*) &Preset0.encrypted_key);
             app_fram_write_field(TX_DBM, (uint8_t*) &Preset0.tx_dbm_10);
             app_fram_write_field(NAME, (uint8_t*) &Preset0.cName);
+            app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset0.negative_events_counter);
+            app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset0.positive_events_counter);
             break;
             
         case PRESET_TYPE_BUTTON_1:
@@ -288,6 +304,8 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(ENCRYPTED_KEY, (uint8_t*) &Preset1.encrypted_key);
             app_fram_write_field(TX_DBM, (uint8_t*) &Preset1.tx_dbm_10);
             app_fram_write_field(NAME, (uint8_t*) &Preset1.cName);
+            app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset1.negative_events_counter);
+            app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset1.positive_events_counter);
             break;
             
         case PRESET_TYPE_VIB_SENS:
@@ -303,6 +321,8 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(ENCRYPTED_KEY, (uint8_t*) &Preset2.encrypted_key);
             app_fram_write_field(TX_DBM, (uint8_t*) &Preset2.tx_dbm_10);
             app_fram_write_field(NAME, (uint8_t*) &Preset2.cName);
+            app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset2.negative_events_counter);
+            app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset2.positive_events_counter);
             break;
             
         case PRESET_TYPE_ON_OFF_SW:
@@ -318,6 +338,8 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(ENCRYPTED_KEY, (uint8_t*) &Preset3.encrypted_key);
             app_fram_write_field(TX_DBM, (uint8_t*) &Preset3.tx_dbm_10);
             app_fram_write_field(NAME, (uint8_t*) &Preset3.cName);
+            app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset3.negative_events_counter);
+            app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset3.positive_events_counter);
             break;
             
         case PRESET_TYPE_GENERATOR:
@@ -333,6 +355,8 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(ENCRYPTED_KEY, (uint8_t*) &Preset4.encrypted_key);
             app_fram_write_field(TX_DBM, (uint8_t*) &Preset4.tx_dbm_10);
             app_fram_write_field(NAME, (uint8_t*) &Preset4.cName);
+            app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset4.negative_events_counter);
+            app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset4.positive_events_counter);
             break;
         default:
             break; 
@@ -369,6 +393,8 @@ int32_t dump_fram(uint8_t print)
                     fram_data.encrypted_key[12], fram_data.encrypted_key[13], fram_data.encrypted_key[14], fram_data.encrypted_key[15]);
             LOG_RAW("FRAM Index [10]->Reserved for adjustable TX dBm 10: %d", fram_data.tx_dbm_10);
 		    LOG_RAW("FRAM Index [11]->cName: %s", fram_data.cName);
+            LOG_RAW("FRAM Index [12]->negative_events_counter: %s", fram_data.negative_events_counter);
+            LOG_RAW("FRAM Index [13]->positive_events_counter: %s", fram_data.positive_events_counter);
         }
 
     if (ret != FRAM_SUCCESS) 

@@ -60,6 +60,22 @@ we_power_data_ble_adv_t we_power_data;
 uint8_t TX_Repeat_Counter = TX_REPEAT_COUNTER_DEFAULT_VALUE;
 
 /**
+ * @brief Increment polarity counter based on the polarity value
+ * 
+ */
+static void increment_polarity_counter()
+{
+	if (u8Polarity)
+	{
+		fram_data.positive_events_counter++;
+	}
+	else
+	{
+		fram_data.negative_events_counter++;
+	}
+}
+
+/**
  * @brief Update the manufacture data
  * 
  * @note only call this ONCE per EventCounter (FRAM[0:3])
@@ -81,6 +97,7 @@ void update_manufacture_data(void)
 		case DATA_TYPE_POLARITY_AND_NAME_9_BYTES: 
 			we_power_data.data_bytes[4] = u8Polarity;
 			memcpy(&we_power_data.data_bytes[5], fram_data.cName, 9);
+			increment_polarity_counter();
 			break;
 
 		case DATA_TYPE_NAME_10_BYTES: 

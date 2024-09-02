@@ -152,6 +152,14 @@ static void get_field_addr_and_length_based_on_type(uint8_t field_type, uint16_t
 			*field_addr = NAME_ADDR;
 			*field_length = NAME_NUM_BYTES;
 			break;
+		case NEG_EVT_CTR:
+			*field_addr = NEG_EVT_CTR_ADDR;
+			*field_length = NEG_EVT_CTR_BYTES;
+			break;
+		case POS_EVT_CTR:
+			*field_addr = POS_EVT_CTR_ADDR;
+			*field_length = POS_EVT_CTR_BYTES;
+			break;
 		default:
 			*field_addr = 0;
 			*field_length = 0;
@@ -297,6 +305,8 @@ int app_fram_write_data( fram_data_t *buffer_to_write)
 		LOG_INF(">>[FRAM INFO]->Encrypted Key: ");
 		LOG_INF(">>[FRAM INFO]->TX dBM 10: %d", buffer_to_write->tx_dbm_10);
 		LOG_INF(">>[FRAM INFO]->cName: %s", buffer_to_write->cName); 
+		LOG_INF(">>[FRAM INFO]->negative_events_counter: %s", fram_data.negative_events_counter);
+        LOG_INF(">>[FRAM INFO]->positive_events_counter: %s", fram_data.positive_events_counter);
 		return FRAM_SUCCESS;
 	}
 }

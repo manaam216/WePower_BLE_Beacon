@@ -30,6 +30,10 @@
 #define TX_DBM_NUM_BYTES			(1)
 #define NAME_ADDR					(TX_DBM_ADDR+TX_DBM_NUM_BYTES)
 #define NAME_NUM_BYTES				(10)
+#define NEG_EVT_CTR_ADDR			(NAME_ADDR+NAME_NUM_BYTES)
+#define NEG_EVT_CTR_BYTES			(4)
+#define POS_EVT_CTR_ADDR			(NEG_EVT_CTR_ADDR+NEG_EVT_CTR_BYTES)
+#define POS_EVT_CTR_BYTES			(4)
 
 /**
  * @brief Structure representing the data format which is stored inside the FRAM
@@ -49,6 +53,8 @@ typedef struct
 	uint8_t  encrypted_key[ENCRYPTED_KEY_NUM_BYTES];        // Encrypted key - AES -128
 	uint8_t  tx_dbm_10;                                     // TX power in 0.1dBm
 	uint8_t  cName[NAME_NUM_BYTES];                         // Name for the alert sensor types
+    uint32_t negative_events_counter;                       // Counter indicating number of negative events
+    uint32_t positive_events_counter;                       // Counter indicating number of positive events
 } fram_data_t;
 
 /**
@@ -69,6 +75,8 @@ enum FRAM_FIELDS
     ENCRYPTED_KEY,       // Encrypted Key
     TX_DBM,              // TX Power dbm
     NAME,                //  Name
+    NEG_EVT_CTR,         // negative event counter
+    POS_EVT_CTR,         // positive event counter
     MAX_FRAM_FIELDS      // Maximum FRAM fields
 };
 
