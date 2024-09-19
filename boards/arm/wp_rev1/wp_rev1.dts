@@ -26,7 +26,7 @@
 	};
 
 	zephyr,user {
-		io-channels = <&comp 1>, <&comp 2>, <&comp 4>, <&comp 7>;
+		io-channels =  <&comp 2>, <&comp 4>, <&comp 7>;
 	};
 };
 

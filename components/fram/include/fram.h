@@ -138,4 +138,27 @@ int app_fram_read_counter(fram_data_t *fram_buffer);
  */
 int app_fram_write_counter( fram_data_t *new_fram_buffer);
 
+/**
+ * @brief Write negative_events_counter value in FRAM
+ * 
+ * @param new_fram_buffer Buffer containing the new negative_events_counter value to be stored in FRAM 
+ * @return int error code
+ */
+int app_fram_write_counter_neg( fram_data_t *new_fram_buffer);
+
+/**
+ * @brief Write positive_events_counter value in FRAM
+ * 
+ * @param new_fram_buffer Buffer containing the new positive_events_counter value to be stored in FRAM 
+ * @return int error code
+ */
+int app_fram_write_counter_pos( fram_data_t *new_fram_buffer);
+
+/**
+ * @brief Write polarity counters in FRAM
+ * 
+ * @param new_fram_buffer Buffer containing New polarity counter values which will be stored in FRAM
+ */
+void fram_update_pol_counters(fram_data_t *new_fram_buffer);
+
 #endif // __FRAM__

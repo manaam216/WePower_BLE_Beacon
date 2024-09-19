@@ -104,103 +104,101 @@ int main(void)
 
     uint8_t application_mode = init_comparator_1_vext_and_read_value();
 
-#if (USE_UVLO_KILL_SWITCH)
-    /**
-     * @brief VBULK10 by comparator to determine if we are running out of gas
-     * 
-     */
-        init_comparator_2_vbulk();
-#endif
-
-        if (application_mode == true)
+    if (application_mode == true)
+    {
+        if (init_uart() != 0)
         {
-            if (init_uart() != 0)
+            LOG_ERR("Init UART failed");
+            indicate_error(ERROR_TYPE_UART);
+        }
+        else
+        {
+            LOG_INF("UART initialization successful, starting CLI");
+
+            (void)init_command_line_interface();
+            toggle_CN_1_4();
+
+            LOG_INF("\rBLE Firmware - UART Link\n");
+            LOG_INF("\r%s %s\n", FW_VERSION, FW_BUILD_DATE);
+
+            // Reading FRAM.
+            dump_fram(true);
+
+            k_work_init(&process_command_task, (k_work_handler_t) process_command_fn); 
+        }
+    }
+    else
+    {
+        disable_uart();
+
+        /**
+         * @brief VBULK10 by comparator to determine if we are running out of gas
+         * 
+         */
+        init_comparator_2_vbulk();
+
+        // configure the IMU,
+        app_accel_config();
+
+        // pressure sensor config.  
+        enable_temp_pressure_sensor_interrupt_config ();
+        
+        // To save time later, start it early
+        if (TEMP_PRESSURE_SUCCESS == app_temp_pressure_trigger())
+        {
+            is_temp_pressure_sensor_triggered = true;
+        }
+        else
+        {
+            is_temp_pressure_sensor_triggered = false;
+        }
+            
+        /**
+         * @brief Read FRAM and act accordingly.
+         * 
+         */
+        if(dump_fram(true) == FRAM_SUCCESS)
+        {
+            set_CN1_6();
+            k_sleep(K_MSEC(fram_data.sleep_after_wake)); 
+            u8Polarity = init_differential_comparator();
+            clear_CN1_6();
+        
+            for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++)
             {
-                LOG_ERR("Init UART failed");
-                indicate_error(ERROR_TYPE_UART);
-            }
-            else
-            {
-                LOG_INF("UART initialization successful, starting CLI");
-
-                (void)init_command_line_interface();
-                toggle_CN_1_4();
-
-                LOG_INF("\rBLE Firmware - UART Link\n");
-                LOG_INF("\r%s %s\n", FW_VERSION, FW_BUILD_DATE);
-
-                // Reading FRAM.
-                dump_fram(true);
-
-                k_work_init(&process_command_task, (k_work_handler_t) process_command_fn); 
+                ecb_key[i] = fram_data.encrypted_key[i];
             }
         }
         else
         {
-            disable_uart();
-
-            // configure the IMU,
-            app_accel_config();
-
-            // pressure sensor config.  
-            enable_temp_pressure_sensor_interrupt_config ();
-            
-            // To save time later, start it early
-            if (TEMP_PRESSURE_SUCCESS == app_temp_pressure_trigger())
-            {
-                is_temp_pressure_sensor_triggered = true;
-            }
-            else
-            {
-                is_temp_pressure_sensor_triggered = false;
-            }
-                
-            /**
-             * @brief Read FRAM and act accordingly.
-             * 
-             */
-            if(dump_fram(true) == FRAM_SUCCESS)
-            {
-                set_CN1_6();
-                k_sleep(K_MSEC(fram_data.sleep_after_wake)); 
-                u8Polarity = init_differential_comparator();
-                clear_CN1_6();
-            
-                for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++)
-                {
-                    ecb_key[i] = fram_data.encrypted_key[i];
-                }
-            }
-            else
-            {
-                // Reset event counter 
-                fram_data.event_counter = 0;
-                LOG_ERR("Failed to Read from FRAM Device");
-                indicate_error(ERROR_TYPE_FRAM);
-                burn_the_energy();
-            }
-        
-            (void)initialize_bluetooth();	
-
-            update_manufacture_data();
-
-            LOG_INF("Starting K Worker Tasks");
-
-            // Initialize a work item to trigger BLE advertising for each event
-            k_work_init(&start_advertising_work_item, start_advertising_handler);
-
-            // Initialize a delayable work item to update the advertising packet for every event by calling update_manufacture_data()
-            k_work_init_delayable(&update_frame_work, update_frame_work_fn);
-
-            // Trigger the 20ms timer to start advertising 
-            k_timer_start(&timer_event, K_MSEC(fram_data.packet_interval), K_MSEC(fram_data.packet_interval));
-
-            // so we don't wait 20ms, send first packet right now.
-            toggle_CN_1_6();
-            k_work_submit(&start_advertising_work_item);// submit the first packet to start advertising instantly
+            // Reset event counter 
+            fram_data.event_counter = 0;
+            LOG_ERR("Failed to Read from FRAM Device");
+            indicate_error(ERROR_TYPE_FRAM);
+            burn_the_energy();
         }
-            
-        while (1) 
-            k_msleep (10);  // supposedly this can end but ending main() seems wrong.
-        return -1;
+    
+        (void)initialize_bluetooth();	
+
+        update_manufacture_data();
+
+        LOG_INF("Starting K Worker Tasks");
+
+        // Initialize a work item to trigger BLE advertising for each event
+        k_work_init(&start_advertising_work_item, start_advertising_handler);
+
+        // Initialize a delayable work item to update the advertising packet for every event by calling update_manufacture_data()
+        k_work_init_delayable(&update_frame_work, update_frame_work_fn);
+
+        // Trigger the 20ms timer to start advertising 
+        k_timer_start(&timer_event, K_MSEC(fram_data.packet_interval), K_MSEC(fram_data.packet_interval));
+
+        // so we don't wait 20ms, send first packet right now.
+        toggle_CN_1_6();
+        k_work_submit(&start_advertising_work_item);// submit the first packet to start advertising instantly
+    }
+        
+    while (1) 
+        k_msleep (10);  // supposedly this can end but ending main() seems wrong.
+    return -1;
 }

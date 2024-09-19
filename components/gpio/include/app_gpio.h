@@ -11,18 +11,6 @@
 int init_we_power_board_gpios(void);
 
 /**
- * @brief Open the polarity reading window and read the GPIO. 
- *        Sleep for the specified time then read GPIO polarity of POL_GPIO_PIN
- * 
- * @note Sleep time is targeting a stable point in the harvester AC waveform.
- * @note 2ms seems good for slide/water/limit switch engine but depends on code to this point.
- * 
- * @param sleep_time Time to sleep, before reading the GPIO
- * @return uint8_t If successful, will return the read polarity value
- */
-uint8_t read_polarity(uint16_t sleep_time);
-
-/**
  * @brief Toggle the Connector 1 pin #6
  * 
  */

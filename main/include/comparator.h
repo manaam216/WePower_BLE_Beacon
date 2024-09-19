@@ -10,17 +10,17 @@
 #define AIN_NEG_CHANNEL_FOR_DIFF_COMPARATOR 7
 
 /**
- * @brief Initialize the comparator 1 of the module and read the voltage
+ * @brief Get application mode
  * 
- * @return uint8_t Initial value from the comparator
+ * @return uint8_t True if UART Mode 0 otherwise
  */
-uint8_t init_comparator_1_vext_and_read_value();
+uint8_t get_application_mode();
 
 /**
  * @brief Initialize the comparator 2 of the module
  * 
  */
-void init_comparator_2_vbulk();
+uint8_t init_comparator_2_vbulk();
 
 /**
  * @brief Get the current value of the comparator 2
@@ -29,6 +29,11 @@ void init_comparator_2_vbulk();
  */
 uint8_t get_comaprator_2_current_value();
 
+/**
+ * @brief Initialize Differential Comparator for Measuring Polarity
+ * 
+ * @return uint8_t Output of the differential Comparotor ( 1 or 0 )
+ */
 uint8_t init_differential_comparator();
 
 #endif // __COMPARATOR__

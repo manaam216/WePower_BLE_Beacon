@@ -67,7 +67,7 @@ int init_we_power_board_gpios(void)
     clear_imu_trigger_pin();
 
     gpio_pin_configure_dt(&polarity_pin, GPIO_INPUT | GPIO_PULL_UP);
-    set_CN1_5();
+    clear_CN1_5();
 
     gpio_pin_configure_dt(&connector_pin_4, GPIO_OUTPUT);
     gpio_pin_configure_dt(&connector_pin_5, GPIO_OUTPUT);
@@ -76,31 +76,6 @@ int init_we_power_board_gpios(void)
     return 0;
 }
 
-/**
- * @brief Open the polarity reading window and read the GPIO. 
- *        Sleep for the specified time then read GPIO polarity of POL_GPIO_PIN
- * 
- * @note Sleep time is targeting a stable point in the harvester AC waveform.
- * @note 2ms seems good for slide/water/limit switch engine but depends on code to this point.
- * 
- * @param sleep_time Time to sleep, before reading the GPIO
- * @return uint8_t If successful, will return the read polarity value
- */
-uint8_t read_polarity(uint16_t sleep_time)
-{
-    uint8_t read_polarity = 0xFF;
-    // Start thye polarity reading window
-    set_CN1_6();
-    // Sleep for the specific time
-    k_sleep(K_MSEC(sleep_time));  
-    // read the pin state, after configuring it to pull_up
-    gpio_pin_configure_dt(&polarity_pin, GPIO_INPUT | GPIO_PULL_UP);
-    read_polarity = gpio_pin_get_dt(&polarity_pin);
-    //close the polarity window
-    clear_CN1_6();
-
-    return read_polarity;
-}
 
 /**
  * @brief Set the Connector 1 pin #5

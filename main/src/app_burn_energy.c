@@ -25,5 +25,5 @@ LOG_MODULE_DECLARE(wepower);
  */
 void burn_the_energy(void)
 {
-	clear_CN1_5();
+	set_CN1_5();
 }

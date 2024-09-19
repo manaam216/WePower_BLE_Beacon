@@ -12,6 +12,7 @@
 #include "app_manuf_data.h"
 #include "app_burn_energy.h"
 #include "app_gpio.h"
+#include "comparator.h"
 
 #define BT_UUID_BYTE1   0x50
 #define BT_UUID_BYTE2   0x57
@@ -70,25 +71,33 @@ void start_advertising_handler(struct k_work *work)
     set_CN1_6();
     clear_CN1_6();
 
-    LOG_INF("Manufacturer Data: ");
-    for (uint8_t i = 0; i < PAYLOAD_FRAME_LENGTH; i++){
-        LOG_RAW("%02X ", manufacture_data[i]);
+    if ((init_comparator_2_vbulk() == 0))
+    {
+        bt_le_ext_adv_stop(ext_adv);
+        burn_the_energy();
     }
-    LOG_RAW(" \n");
-
-    
-    LOG_INF("Start_Advertising->Setting Data");
-
-	if (bt_le_ext_adv_set_data(ext_adv, ad, ARRAY_SIZE(ad), NULL, 0)) 
+    else
     {
-        LOG_ERR("Failed to set advertising data");
-	}
+        LOG_INF("Manufacturer Data: ");
+        for (uint8_t i = 0; i < PAYLOAD_FRAME_LENGTH; i++){
+            LOG_RAW("%02X ", manufacture_data[i]);
+        }
+        LOG_RAW(" \n");
 
-    LOG_INF("Start_Advertising->BLE ADV Start");
-	if (bt_le_ext_adv_start(ext_adv, BT_LE_EXT_ADV_START_PARAM(BLE_ADV_TIMEOUT, BLE_ADV_EVENTS))) 
-    {
-		LOG_ERR("Failed to start advertising set \n");
-	}
+        
+        LOG_INF("Start_Advertising->Setting Data");
+
+        if (bt_le_ext_adv_set_data(ext_adv, ad, ARRAY_SIZE(ad), NULL, 0)) 
+        {
+            LOG_ERR("Failed to set advertising data");
+        }
+
+        LOG_INF("Start_Advertising->BLE ADV Start");
+        if (bt_le_ext_adv_start(ext_adv, BT_LE_EXT_ADV_START_PARAM(BLE_ADV_TIMEOUT, BLE_ADV_EVENTS))) 
+        {
+            LOG_ERR("Failed to start advertising set \n");
+        }
+    }
 }
 
 /**

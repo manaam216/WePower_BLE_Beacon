@@ -133,7 +133,7 @@ static fram_data_t Preset0 =
     PRESET0_DEFAULT_SERIAL_NUM,
     PRESET0_DEFAULT_TYPE,
     PRESET0_DEFAULT_PKT_INTVAL,
-    PRESET0_DEFAULT_SLEEP_BTWEEN_EVTS,   
+    PRESET1_DEFAULT_EVT_MAX_PKT,   
     PRESET0_DEFAULT_SLEEP_BTWEEN_EVTS,    
     PRESET0_DEFAULT_SLEEP_AFTER_WAKE,
     PRESET0_DEFAULT_ISL9122_VOLTS,
@@ -155,7 +155,7 @@ static fram_data_t Preset1 =
     PRESET1_DEFAULT_SERIAL_NUM,
     PRESET1_DEFAULT_TYPE,
     PRESET1_DEFAULT_PKT_INTVAL,
-    PRESET1_DEFAULT_SLEEP_BTWEEN_EVTS,   
+    PRESET1_DEFAULT_EVT_MAX_PKT,   
     PRESET1_DEFAULT_SLEEP_BTWEEN_EVTS,    
     PRESET1_DEFAULT_SLEEP_AFTER_WAKE,
     PRESET1_DEFAULT_ISL9122_VOLTS,
@@ -177,7 +177,7 @@ static fram_data_t Preset2 =
     PRESET2_DEFAULT_SERIAL_NUM,
     PRESET2_DEFAULT_TYPE,
     PRESET2_DEFAULT_PKT_INTVAL,
-    PRESET2_DEFAULT_SLEEP_BTWEEN_EVTS,   
+    PRESET2_DEFAULT_EVT_MAX_PKT,   
     PRESET2_DEFAULT_SLEEP_BTWEEN_EVTS,    
     PRESET2_DEFAULT_SLEEP_AFTER_WAKE,
     PRESET2_DEFAULT_ISL9122_VOLTS,
@@ -199,7 +199,7 @@ static fram_data_t Preset3 =
     PRESET3_DEFAULT_SERIAL_NUM,
     PRESET3_DEFAULT_TYPE,
     PRESET3_DEFAULT_PKT_INTVAL,
-    PRESET3_DEFAULT_SLEEP_BTWEEN_EVTS,   
+    PRESET3_DEFAULT_EVT_MAX_PKT,   
     PRESET3_DEFAULT_SLEEP_BTWEEN_EVTS,    
     PRESET3_DEFAULT_SLEEP_AFTER_WAKE,
     PRESET3_DEFAULT_ISL9122_VOLTS,
@@ -221,7 +221,7 @@ static fram_data_t Preset4 =
     PRESET4_DEFAULT_SERIAL_NUM,
     PRESET4_DEFAULT_TYPE,
     PRESET4_DEFAULT_PKT_INTVAL,
-    PRESET4_DEFAULT_SLEEP_BTWEEN_EVTS,   
+    PRESET4_DEFAULT_EVT_MAX_PKT,   
     PRESET4_DEFAULT_SLEEP_BTWEEN_EVTS,    
     PRESET4_DEFAULT_SLEEP_AFTER_WAKE,
     PRESET4_DEFAULT_ISL9122_VOLTS,
@@ -393,8 +393,8 @@ int32_t dump_fram(uint8_t print)
                     fram_data.encrypted_key[12], fram_data.encrypted_key[13], fram_data.encrypted_key[14], fram_data.encrypted_key[15]);
             LOG_RAW("FRAM Index [10]->Reserved for adjustable TX dBm 10: %d", fram_data.tx_dbm_10);
 		    LOG_RAW("FRAM Index [11]->cName: %s", fram_data.cName);
-            LOG_RAW("FRAM Index [12]->negative_events_counter: %s", fram_data.negative_events_counter);
-            LOG_RAW("FRAM Index [13]->positive_events_counter: %s", fram_data.positive_events_counter);
+            LOG_RAW("FRAM Index [12]->negative_events_counter: %d", fram_data.negative_events_counter);
+            LOG_RAW("FRAM Index [13]->positive_events_counter: %d", fram_data.positive_events_counter);
         }
 
     if (ret != FRAM_SUCCESS) 
