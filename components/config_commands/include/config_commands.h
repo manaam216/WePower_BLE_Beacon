@@ -50,6 +50,10 @@
 #define POLARITY_COUNTERS_MAX_VALUE 0xFFFFFFFF
 #define POLARITY_COUNTERS_DEFAULT_VALUE 0
 
+#define VBULK_THRESH_MIN_VALUE 0
+#define VBULK_THRESH_MAX_VALUE 0xFF
+#define VBULK_THRESH_DEFAULT_VALUE 19
+
 extern fram_data_t fram_data;
 
 typedef enum 

@@ -4,6 +4,17 @@
 #include <stdint.h>
 
 /**
+ * @brief Enumaeration for Polairty mode
+ * 
+ */
+typedef enum
+{
+    POLARITY_POSITIVE,
+    POLARITY_NEGATIVE,
+    POLAIRTY_ERROR
+}polairty_t;
+
+/**
  * @brief Initialize the GPIOs of the WePower Board
  * 
  * @return  
@@ -107,5 +118,12 @@ void clear_CN1_4();
  * 
  */
 void set_CN1_4();
+
+/**
+ * @brief Read Differential Polaritry
+ * 
+ * @return uint8_t 
+ */
+uint8_t read_polarity();
 
 #endif // __APP_GPIO__

@@ -34,6 +34,8 @@
 #define NEG_EVT_CTR_BYTES			(4)
 #define POS_EVT_CTR_ADDR			(NEG_EVT_CTR_ADDR+NEG_EVT_CTR_BYTES)
 #define POS_EVT_CTR_BYTES			(4)
+#define VBULK_THRESH_ADDR			(POS_EVT_CTR_ADDR+POS_EVT_CTR_BYTES)
+#define VBULK_THRESH_BYTES			(1)
 
 /**
  * @brief Structure representing the data format which is stored inside the FRAM
@@ -55,6 +57,7 @@ typedef struct
 	uint8_t  cName[NAME_NUM_BYTES];                         // Name for the alert sensor types
     uint32_t negative_events_counter;                       // Counter indicating number of negative events
     uint32_t positive_events_counter;                       // Counter indicating number of positive events
+    uint8_t  vbulk_thresh;                                  // VBULK Threshold
 } fram_data_t;
 
 /**
@@ -77,6 +80,7 @@ enum FRAM_FIELDS
     NAME,                //  Name
     NEG_EVT_CTR,         // negative event counter
     POS_EVT_CTR,         // positive event counter
+    VBULK_THRESH,        // VBULK Thresh
     MAX_FRAM_FIELDS      // Maximum FRAM fields
 };
 

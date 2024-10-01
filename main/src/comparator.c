@@ -6,13 +6,12 @@
 #include <hal/nrf_gpio.h>
 
 #include "app_burn_energy.h"
+#include "config_commands.h"
 
 #define COMPARATOR_1_VDOWN_VOLTAGE      0.8
 #define COMPARATOR_1_VUP_VOLTAGE        1.0
 #define COMPARATOR_1_REFERENCE_VOLTAGE  1.2
 
-#define COMPARATOR_2_VDOWN_VOLTAGE      0.19
-#define COMPARATOR_2_VUP_VOLTAGE        0.19
 #define COMPARATOR_2_REFERENCE_VOLTAGE  1.2
 
 #define COMPARTATOR_REFERENCE NRF_COMP_REF_Int1V2
@@ -71,11 +70,12 @@ uint8_t init_comparator_2_vbulk()
 {
     nrfx_comp_config_t  comp_config = NRFX_COMP_DEFAULT_CONFIG(AIN_CHANNEL_FOR_COMP_2);
     nrf_comp_th_t thresh;
+    float thresh_value =(((float)fram_data.vbulk_thresh)/100.0);
     comp_config.reference = COMP_REFSEL_REFSEL_Int1V2;
     comp_config.speed_mode = NRF_COMP_SP_MODE_High; // Enables the low power mode 
 
-    thresh.th_down = NRFX_VOLTAGE_THRESHOLD_TO_INT(COMPARATOR_2_VDOWN_VOLTAGE, COMPARATOR_2_REFERENCE_VOLTAGE);
-    thresh.th_up   = NRFX_VOLTAGE_THRESHOLD_TO_INT(COMPARATOR_2_VUP_VOLTAGE, COMPARATOR_2_REFERENCE_VOLTAGE);
+    thresh.th_down = NRFX_VOLTAGE_THRESHOLD_TO_INT(thresh_value, COMPARATOR_2_REFERENCE_VOLTAGE);
+    thresh.th_up   = NRFX_VOLTAGE_THRESHOLD_TO_INT(thresh_value, COMPARATOR_2_REFERENCE_VOLTAGE);
     comp_config.threshold = thresh;
     
     if ( nrfx_comp_init(&comp_config, NULL) != NRFX_SUCCESS )
@@ -101,13 +101,13 @@ uint8_t get_comaprator_2_current_value()
 
 uint8_t init_differential_comparator()
 {
-    nrfx_comp_config_t  comp_config = NRFX_COMP_DEFAULT_CONFIG(AIN_POS_CHANNEL_FOR_DIFF_COMPARATOR);
-    // comp_config.reference = NRF_COMP_REF_Int1V2; 
-    comp_config.main_mode = COMP_MODE_MAIN_Diff;
-    comp_config.ext_ref = AIN_NEG_CHANNEL_FOR_DIFF_COMPARATOR;
-    comp_config.speed_mode = COMP_MODE_SP_Low;
-    nrfx_comp_init(&comp_config, NULL);
-	nrfx_comp_start(0,  0);
+    // nrfx_comp_config_t  comp_config = NRFX_COMP_DEFAULT_CONFIG(AIN_POS_CHANNEL_FOR_DIFF_COMPARATOR);
+    // // comp_config.reference = NRF_COMP_REF_Int1V2; 
+    // comp_config.main_mode = COMP_MODE_MAIN_Diff;
+    // comp_config.ext_ref = AIN_NEG_CHANNEL_FOR_DIFF_COMPARATOR;
+    // comp_config.speed_mode = COMP_MODE_SP_Low;
+    // nrfx_comp_init(&comp_config, NULL);
+	// nrfx_comp_start(0,  0);
 
     return nrfx_comp_sample();
 }

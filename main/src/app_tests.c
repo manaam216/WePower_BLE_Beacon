@@ -98,12 +98,8 @@ static void handle_accelerometer_test_command()
  */
 static void handle_comparator_test_command()
 {
-    uint8_t comparator_sample_value = init_comparator_1_vext_and_read_value();
-    LOG_RAW("Read Comparator 1 value %d", comparator_sample_value);
-    // comparator_sample_value = get_comaprator_2_current_value();
-    // LOG_RAW("Read Comparator 2 value %d", comparator_sample_value);
-    comparator_sample_value = init_differential_comparator();
-    LOG_RAW("Read Differential Comparator value %d", comparator_sample_value);
+    uint8_t comparator_sample_value = get_comaprator_2_current_value();
+    LOG_RAW("Read Comparator 2 value %d", comparator_sample_value);
 }
 
 static void handle_ble_beacon_test_command()

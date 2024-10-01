@@ -26,7 +26,7 @@
 	};
 
 	zephyr,user {
-		io-channels =  <&comp 2>, <&comp 4>, <&comp 7>;
+		io-channels =  <&comp 2>;
 	};
 };
 
@@ -184,13 +184,13 @@
 			gpios = <&gpio0 2 GPIO_OPEN_DRAIN>;
 			label = "LPS DRDY";
 		};
-		polarity: polarity_pin {
-			gpios = <&gpio0 13 GPIO_OPEN_DRAIN>;
-			label = "Polarity as scope point";
+		polarity_p: polarity_p_pin {
+			gpios = <&gpio0 28 GPIO_OPEN_DRAIN>;
+			label = "Positive Polarity as scope point";
 		};
-		// vex10: vex10_pin {
-		// 	gpios = <&gpio0 03 GPIO_OPEN_DRAIN>;
-		// 	label = "VEXT10 Pin";
-		// };
+		polarity_n: polarity_n_pin {
+			gpios = <&gpio0 31 GPIO_OPEN_DRAIN>;
+			label = "Negative Polarity as scope point";
+		};
 	};
 };

@@ -18,12 +18,6 @@ static const struct gpio_dt_spec imu_trig    = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELA
 static const struct gpio_dt_spec imu_drdy    = GPIO_DT_SPEC_GET_BY_IDX(DT_NODELABEL(imu_drdy),gpios,0);
 
 /**
- * @brief Device tree specification for polarity pin GPIO
- * 
- */
-static const struct gpio_dt_spec polarity_pin    = GPIO_DT_SPEC_GET(DT_NODELABEL(polarity),gpios);
-
-/**
  * @brief Device tree specification for connector pin # 4
  * 
  */
@@ -54,6 +48,18 @@ static const struct gpio_dt_spec connector_pin_7 = GPIO_DT_SPEC_GET(DT_NODELABEL
 static const struct gpio_dt_spec tps_drdy = GPIO_DT_SPEC_GET(DT_NODELABEL(lps_drdy),gpios);
 
 /**
+ * @brief Device tree specification for connector pin # 6
+ * 
+ */
+static const struct gpio_dt_spec polairty_p_pin = GPIO_DT_SPEC_GET(DT_NODELABEL(polarity_p),gpios);
+
+/**
+ * @brief Device tree specification for connector pin # 7
+ * 
+ */
+static const struct gpio_dt_spec polairty_n_pin = GPIO_DT_SPEC_GET(DT_NODELABEL(polarity_n),gpios);
+
+/**
  * @brief Initialize the GPIOs of the WePower Board
  * 
  * @return  0
@@ -66,7 +72,8 @@ int init_we_power_board_gpios(void)
     gpio_pin_configure_dt(&imu_trig, GPIO_OUTPUT);
     clear_imu_trigger_pin();
 
-    gpio_pin_configure_dt(&polarity_pin, GPIO_INPUT | GPIO_PULL_UP);
+    gpio_pin_configure_dt(&polairty_p_pin, GPIO_INPUT);
+    gpio_pin_configure_dt(&polairty_n_pin, GPIO_INPUT);
     clear_CN1_5();
 
     gpio_pin_configure_dt(&connector_pin_4, GPIO_OUTPUT);
@@ -223,4 +230,33 @@ uint8_t get_imu_drdy_pin_status()
 uint8_t get_tps_drdy_pin_status()
 {
     return gpio_pin_get_dt(&tps_drdy);
+}
+
+/**
+ * @brief Read Differential Polaritry
+ * 
+ * @return uint8_t 
+ */
+uint8_t read_polarity()
+{
+    uint8_t pos_pin_state = gpio_pin_get_dt(&polairty_p_pin);
+    uint8_t neg_pin_state = gpio_pin_get_dt(&polairty_n_pin);
+    polairty_t result = POLAIRTY_ERROR;
+    if (pos_pin_state != neg_pin_state)
+    {
+        if (pos_pin_state)
+        {
+            result = POLARITY_POSITIVE;
+        }
+        else
+        {
+            result = POLARITY_NEGATIVE;
+        }
+    }
+    else
+    {
+        result = POLAIRTY_ERROR;
+    }
+    
+    return result;
 }

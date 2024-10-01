@@ -102,7 +102,7 @@ int main(void)
      * 
      */
 
-    uint8_t application_mode = init_comparator_1_vext_and_read_value();
+    uint8_t application_mode = get_application_mode();
 
     if (application_mode == true)
     {
@@ -159,9 +159,9 @@ int main(void)
          */
         if(dump_fram(true) == FRAM_SUCCESS)
         {
-            set_CN1_6();
             k_sleep(K_MSEC(fram_data.sleep_after_wake)); 
-            u8Polarity = init_differential_comparator();
+            set_CN1_6();
+            u8Polarity = read_polarity();
             clear_CN1_6();
         
             for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++)

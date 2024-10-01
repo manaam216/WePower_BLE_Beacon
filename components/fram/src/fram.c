@@ -160,6 +160,10 @@ static void get_field_addr_and_length_based_on_type(uint8_t field_type, uint16_t
 			*field_addr = POS_EVT_CTR_ADDR;
 			*field_length = POS_EVT_CTR_BYTES;
 			break;
+		case VBULK_THRESH:
+			*field_addr = VBULK_THRESH_ADDR;
+			*field_length = VBULK_THRESH_BYTES;
+			break;
 		default:
 			*field_addr = 0;
 			*field_length = 0;
