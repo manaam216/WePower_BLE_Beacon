@@ -402,6 +402,37 @@ static int set_device_name_handler(const struct shell *sh, size_t argc, char **a
     return 0;
 }
 
+/**
+ * @brief set the Polarity method in FRAM
+ * 
+ * @param sh Shell object
+ * @param argc Size of the arguments
+ * @param argv Arguments, to be accessed as tokens
+ * @return int error code
+ */
+static int set_vbulk_thresh(const struct shell *sh, size_t argc, char **argv)
+{
+    memset(&command_data,0, sizeof(command_data));
+    command_data.type = COMMAND_TYPE_SET;
+    command_data.field_index = atoi(argv[0]);
+
+    command_data.data[0] = atoi(argv[1]);
+    command_data.data_len = 1U; 
+
+    uint64_t received_value_to_set = strtoull(argv[1], NULL, 10);
+
+    if (received_value_to_set <= VBULK_THRESH_MAX_VALUE)
+    {
+        k_work_submit(&process_command_task);
+    }
+    else
+    {
+        shell_print(sh,"\r Received Value out of bounds %lld\n", received_value_to_set);
+        memset(&command_data,0, sizeof(command_data));
+    }
+    return 0;
+}
+
 /*********************************END OF SETTER FUNCTIONS FOR FRAM FIELDS***************************/
 
 /********************************GETTER FUNCTIONS FOR FRAM FIELDS**********************************/
@@ -586,6 +617,7 @@ uint8_t init_command_line_interface()
         SHELL_CMD(9, NULL, "set Encrypted Key.",set_encrypted_key_handler),
         SHELL_CMD(10, NULL, "set TX power in 0.1 dbm.",set_tx_power_handler),
         SHELL_CMD(11, NULL, "set Device Name",set_device_name_handler),
+        SHELL_CMD(12, NULL, "set VBULK threshold",set_vbulk_thresh),
         SHELL_SUBCMD_SET_END
     );
     SHELL_CMD_REGISTER(s, &set, "Set commands", wrong_format_handler);

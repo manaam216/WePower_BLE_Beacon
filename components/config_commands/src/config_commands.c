@@ -120,10 +120,11 @@ const fram_info_t FRAM_INFO[MAX_FRAM_FIELDS] =
     {"ENCRYPTED KEY",       DATA_BYTE_ARRAY, ENCRYPTED_KEY_NUM_BYTES, 0, 0,0}, // Since this is a byte array, mix max values do not matter
     {"TX dBm 10 (R.F.U.)",      DATA_NUMBER, TX_DBM_NUM_BYTES,       TX_POWER_MIN_VALUE, TX_POWER_MAX_VALUE, TX_POWER_DEFAULT_VALUE},
     {"Device NAME",             DATA_STRING, NAME_NUM_BYTES,         0, 0,0}, // Since this is astring, max and min values do not matter
-    {"NEG EVT CTR",             DATA_NUMBER, NEG_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
-    {"POS EVT CTR",             DATA_NUMBER, POS_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
     {"VBULK THRESH",            DATA_NUMBER, VBULK_THRESH_BYTES, VBULK_THRESH_MIN_VALUE, VBULK_THRESH_MAX_VALUE, VBULK_THRESH_DEFAULT_VALUE},
+    {"NEG EVT CTR",             DATA_NUMBER, NEG_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
+    {"POS EVT CTR",             DATA_NUMBER, POS_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE}
 };
+
 
 /**
  * @brief Preset 0 will be used for button type 0
@@ -143,9 +144,9 @@ static fram_data_t Preset0 =
     PRESET0_DEFAULT_ENCRYPT_KEY,
     PRESET0_DEFAULT_TX_POWER,
     PRESET0_DEFAULT_NAME,
+    DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_VBULK_THRESH_VALUE
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
 /**
@@ -166,9 +167,9 @@ static fram_data_t Preset1 =
     PRESET1_DEFAULT_ENCRYPT_KEY,
     PRESET1_DEFAULT_TX_POWER,
     PRESET1_DEFAULT_NAME,
+    DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_VBULK_THRESH_VALUE
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
  /**
@@ -189,9 +190,9 @@ static fram_data_t Preset2 =
     PRESET2_DEFAULT_ENCRYPT_KEY,
     PRESET2_DEFAULT_TX_POWER,
     PRESET2_DEFAULT_NAME,
+    DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_VBULK_THRESH_VALUE
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
  /**
@@ -212,9 +213,9 @@ static fram_data_t Preset3 =
     PRESET3_DEFAULT_ENCRYPT_KEY,
     PRESET3_DEFAULT_TX_POWER,
     PRESET3_DEFAULT_NAME,
+    DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_VBULK_THRESH_VALUE
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
  /**
@@ -235,9 +236,9 @@ static fram_data_t Preset4 =
     PRESET4_DEFAULT_ENCRYPT_KEY,
     PRESET4_DEFAULT_TX_POWER,
     PRESET4_DEFAULT_NAME,
+    DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
-    DEFAULT_VBULK_THRESH_VALUE
 };
 
 /**
@@ -387,27 +388,37 @@ int32_t dump_fram(uint8_t print)
     if((ret == FRAM_SUCCESS) && print)
         {
             // Success! Add it to the payload
-            LOG_RAW("%s",">> ------- Reading FRAM Data -------");
+            // Success! Add it to the payload
+            LOG_INF("%s",">> ------- Reading FRAM Data -------");
 
-		    LOG_RAW("FRAM Index [0]->Event Counter: %d", fram_data.event_counter);            
-            LOG_RAW("FRAM Index [1]->Serial Number: %d", fram_data.serial_number);
-            LOG_RAW("FRAM Index [2]->Device Type: %d", fram_data.type);
-		    LOG_RAW("FRAM Index [3]->Packet Repeat Interval: %d ms", fram_data.packet_interval);
-		    LOG_RAW("FRAM Index [4]->Maximum Packets per Event: %d", fram_data.event_max_packets);
-		    LOG_RAW("FRAM Index [5]->Sleep Between Events: %d", fram_data.sleep_between_events);
-		    LOG_RAW("FRAM Index [6]->Sleep Before Testing Polarity: %d", fram_data.sleep_after_wake);
-		    LOG_RAW("FRAM Index [7]->Reserved Byte: %d", fram_data.u8_voltsISL9122);
-		    LOG_RAW("FRAM Index [8]->Reserved Byte: %d", fram_data.u8_POLmethod);
-            LOG_RAW("FRAM Index [9]->Reserved for Programmable Encrypted Key:  %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", 
+		    LOG_INF("FRAM Index [0]->Event Counter: %d", fram_data.event_counter);            
+            LOG_INF("FRAM Index [1]->Serial Number: %d", fram_data.serial_number);
+            LOG_INF("FRAM Index [2]->Device Type: %d", fram_data.type);
+		    LOG_INF("FRAM Index [3]->Packet Repeat Interval: %d ms", fram_data.packet_interval);
+		    LOG_INF("FRAM Index [4]->Maximum Packets per Event: %d", fram_data.event_max_packets);
+		    LOG_INF("FRAM Index [5]->Sleep Between Events: %d", fram_data.sleep_between_events);
+		    LOG_INF("FRAM Index [6]->Sleep Before Testing Polarity: %d", fram_data.sleep_after_wake);
+		    LOG_INF("FRAM Index [7]->Reserved Byte: %d", fram_data.u8_voltsISL9122);
+		    LOG_INF("FRAM Index [8]->Reserved Byte: %d", fram_data.u8_POLmethod);
+            LOG_INF("FRAM Index [9]->Reserved for Programmable Encrypted Key:  %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", 
                     fram_data.encrypted_key[0], fram_data.encrypted_key[1], fram_data.encrypted_key[2], fram_data.encrypted_key[3], 
                     fram_data.encrypted_key[4], fram_data.encrypted_key[5], fram_data.encrypted_key[6], fram_data.encrypted_key[7], 
                     fram_data.encrypted_key[8], fram_data.encrypted_key[9], fram_data.encrypted_key[10], fram_data.encrypted_key[11], 
                     fram_data.encrypted_key[12], fram_data.encrypted_key[13], fram_data.encrypted_key[14], fram_data.encrypted_key[15]);
-            LOG_RAW("FRAM Index [10]->Reserved for adjustable TX dBm 10: %d", fram_data.tx_dbm_10);
-		    LOG_RAW("FRAM Index [11]->cName: %s", fram_data.cName);
-            LOG_RAW("FRAM Index [12]->negative_events_counter: %d", fram_data.negative_events_counter);
-            LOG_RAW("FRAM Index [13]->positive_events_counter: %d", fram_data.positive_events_counter);
-            LOG_RAW("FRAM Index [14]->vbulk threshold: %d/100", fram_data.vbulk_thresh);
+            LOG_INF("FRAM Index [10]->Reserved for adjustable TX dBm 10: %d", fram_data.tx_dbm_10);
+		    LOG_INF("FRAM Index [11]->cName: %c%c%c%c%c%c%c%c%c%c", 
+                    fram_data.cName[0], fram_data.cName[1], fram_data.cName[2],
+                    fram_data.cName[3], fram_data.cName[4], fram_data.cName[5],
+                    fram_data.cName[6], fram_data.cName[7], fram_data.cName[8], fram_data.cName[9]);
+            LOG_INF("FRAM Index [12]->vbulk threshold: %d/100", fram_data.vbulk_thresh);
+            uint32_t read_buffer = 0;
+	        app_fram_read_field(NEG_EVT_CTR,(uint8_t*) &read_buffer);
+            fram_data.negative_events_counter = read_buffer;
+            read_buffer = 0;
+            app_fram_read_field(POS_EVT_CTR,(uint8_t*) &read_buffer);
+            fram_data.positive_events_counter = read_buffer;
+            LOG_INF("FRAM Index [14]->negative_events_counter: %d", fram_data.negative_events_counter);
+            LOG_INF("FRAM Index [15]->positive_events_counter: %d \n", fram_data.positive_events_counter);
         }
 
     if (ret != FRAM_SUCCESS) 

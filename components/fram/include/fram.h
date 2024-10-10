@@ -30,12 +30,13 @@
 #define TX_DBM_NUM_BYTES			(1)
 #define NAME_ADDR					(TX_DBM_ADDR+TX_DBM_NUM_BYTES)
 #define NAME_NUM_BYTES				(10)
-#define NEG_EVT_CTR_ADDR			(NAME_ADDR+NAME_NUM_BYTES)
+#define VBULK_THRESH_ADDR			(NAME_ADDR+NAME_NUM_BYTES)
+#define VBULK_THRESH_BYTES			(1)
+#define NEG_EVT_CTR_ADDR			(VBULK_THRESH_ADDR+VBULK_THRESH_BYTES)
 #define NEG_EVT_CTR_BYTES			(4)
 #define POS_EVT_CTR_ADDR			(NEG_EVT_CTR_ADDR+NEG_EVT_CTR_BYTES)
 #define POS_EVT_CTR_BYTES			(4)
-#define VBULK_THRESH_ADDR			(POS_EVT_CTR_ADDR+POS_EVT_CTR_BYTES)
-#define VBULK_THRESH_BYTES			(1)
+
 
 /**
  * @brief Structure representing the data format which is stored inside the FRAM
@@ -55,9 +56,9 @@ typedef struct
 	uint8_t  encrypted_key[ENCRYPTED_KEY_NUM_BYTES];        // Encrypted key - AES -128
 	uint8_t  tx_dbm_10;                                     // TX power in 0.1dBm
 	uint8_t  cName[NAME_NUM_BYTES];                         // Name for the alert sensor types
+    uint8_t  vbulk_thresh;                                  // VBULK Threshold
     uint32_t negative_events_counter;                       // Counter indicating number of negative events
     uint32_t positive_events_counter;                       // Counter indicating number of positive events
-    uint8_t  vbulk_thresh;                                  // VBULK Threshold
 } fram_data_t;
 
 /**
@@ -78,9 +79,9 @@ enum FRAM_FIELDS
     ENCRYPTED_KEY,       // Encrypted Key
     TX_DBM,              // TX Power dbm
     NAME,                //  Name
+    VBULK_THRESH,        // VBULK Thresh
     NEG_EVT_CTR,         // negative event counter
     POS_EVT_CTR,         // positive event counter
-    VBULK_THRESH,        // VBULK Thresh
     MAX_FRAM_FIELDS      // Maximum FRAM fields
 };
 
@@ -163,6 +164,6 @@ int app_fram_write_counter_pos( fram_data_t *new_fram_buffer);
  * 
  * @param new_fram_buffer Buffer containing New polarity counter values which will be stored in FRAM
  */
-void fram_update_pol_counters(fram_data_t *new_fram_buffer);
+void fram_update_pol_counters(fram_data_t new_fram_buffer);
 
 #endif // __FRAM__

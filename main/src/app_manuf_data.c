@@ -65,12 +65,15 @@ static void increment_polarity_counter()
 {
 	if (u8Polarity)
 	{
-		fram_data.positive_events_counter++;
+		fram_data.negative_events_counter++;
 	}
 	else
 	{
-		fram_data.negative_events_counter++;
+		fram_data.positive_events_counter++;
 	}
+
+	LOG_INF("fram_data.negative_events_counter %d",fram_data.negative_events_counter);
+	LOG_INF("fram_data.positive_events_counter %d",fram_data.positive_events_counter);
 }
 
 /**
@@ -110,7 +113,7 @@ void update_manufacture_data(void)
     // increase the FRAM Event counter and set first four bytes
 	fram_data.event_counter++;
     app_fram_write_counter(&fram_data);
-	fram_update_pol_counters(&fram_data);
+	fram_update_pol_counters(fram_data);
 
 	we_power_data.data_fields.type = fram_data.type;
 	we_power_data.data_fields.event_counter24[0] = (uint8_t)((fram_data.event_counter & 0x000000FF));

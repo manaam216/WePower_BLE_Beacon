@@ -309,6 +309,10 @@ int app_fram_write_data( fram_data_t *buffer_to_write)
 		LOG_INF(">>[FRAM INFO]->Encrypted Key: ");
 		LOG_INF(">>[FRAM INFO]->TX dBM 10: %d", buffer_to_write->tx_dbm_10);
 		LOG_INF(">>[FRAM INFO]->cName: %s", buffer_to_write->cName); 
+		LOG_INF("FRAM Index [11]->cName: %c%c%c%c%c%c%c%c%c%c", 
+                    buffer_to_write->cName[0], buffer_to_write->cName[1], buffer_to_write->cName[2],
+                    buffer_to_write->cName[3], buffer_to_write->cName[4], buffer_to_write->cName[5],
+                    buffer_to_write->cName[6], buffer_to_write->cName[7], buffer_to_write->cName[8], buffer_to_write->cName[9]);
 		LOG_INF(">>[FRAM INFO]->negative_events_counter: %d", fram_data.negative_events_counter);
         LOG_INF(">>[FRAM INFO]->positive_events_counter: %d", fram_data.positive_events_counter);
 		return FRAM_SUCCESS;
@@ -497,8 +501,8 @@ int app_fram_service(uint32_t *counter)
  * 
  * @param new_fram_buffer Buffer containing New polarity counter values which will be stored in FRAM
  */
-void fram_update_pol_counters(fram_data_t *new_fram_buffer)
+void fram_update_pol_counters(fram_data_t new_fram_buffer)
 {
-	app_fram_write_counter_neg(new_fram_buffer);
-	app_fram_write_counter_pos(new_fram_buffer);
+	app_fram_write_field(POS_EVT_CTR,(uint8_t*) &new_fram_buffer.positive_events_counter);
+	app_fram_write_field(NEG_EVT_CTR,(uint8_t*) &new_fram_buffer.negative_events_counter);
 }
