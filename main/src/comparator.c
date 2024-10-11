@@ -72,7 +72,7 @@ uint8_t init_comparator_2_vbulk()
     nrf_comp_th_t thresh;
     float thresh_value =(((float)fram_data.vbulk_thresh)/100.0);
     comp_config.reference = COMP_REFSEL_REFSEL_Int1V2;
-    comp_config.speed_mode = NRF_COMP_SP_MODE_High; // Enables the low power mode 
+    comp_config.speed_mode = NRF_COMP_SP_MODE_High;  
 
     thresh.th_down = NRFX_VOLTAGE_THRESHOLD_TO_INT(thresh_value, COMPARATOR_2_REFERENCE_VOLTAGE);
     thresh.th_up   = NRFX_VOLTAGE_THRESHOLD_TO_INT(thresh_value, COMPARATOR_2_REFERENCE_VOLTAGE);

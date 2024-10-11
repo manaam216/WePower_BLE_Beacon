@@ -233,29 +233,37 @@ uint8_t get_tps_drdy_pin_status()
 }
 
 /**
- * @brief Read Differential Polaritry
+ * @brief Read Differential Polarity
+ *
+ * This function reads the states of two GPIO pins to determine the 
+ * polarity (positive, negative, or error) based on their states.
  * 
- * @return uint8_t 
+ * @param[out] polarity_reading_err Pointer to a variable that will 
+ * receive an error flag. It is set to 0 if the reading is valid 
+ * and 1 if there is an error (both pins are in the same state).
+ *
+ * @return uint8_t Returns one of the following:
+ *         - POLARITY_POSITIVE: If the positive pin is high and the 
+ *           negative pin is low.
+ *         - POLARITY_NEGATIVE: If the positive pin is low and the 
+ *           negative pin is high.
  */
-uint8_t read_polarity()
+uint8_t read_polarity(uint8_t *polarity_reading_err)
 {
     uint8_t pos_pin_state = gpio_pin_get_dt(&polairty_p_pin);
     uint8_t neg_pin_state = gpio_pin_get_dt(&polairty_n_pin);
-    polairty_t result = POLAIRTY_ERROR;
+    polairty_t result;
+
+    // Check if the pin states are different
     if (pos_pin_state != neg_pin_state)
     {
-        if (pos_pin_state)
-        {
-            result = POLARITY_POSITIVE;
-        }
-        else
-        {
-            result = POLARITY_NEGATIVE;
-        }
+        *polarity_reading_err = 0;
+        result = pos_pin_state ? POLARITY_POSITIVE : POLARITY_NEGATIVE;
     }
     else
     {
-        result = POLAIRTY_ERROR;
+        *polarity_reading_err = POLAIRTY_ERROR;
+        result = pos_pin_state ? POLARITY_POSITIVE : POLARITY_NEGATIVE;
     }
     
     return result;

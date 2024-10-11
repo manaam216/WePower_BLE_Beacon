@@ -160,6 +160,10 @@ static void get_field_addr_and_length_based_on_type(uint8_t field_type, uint16_t
 			*field_addr = POS_EVT_CTR_ADDR;
 			*field_length = POS_EVT_CTR_BYTES;
 			break;
+		case FLT_EVT_CTR:
+			*field_addr = FLT_EVT_CTR_ADDR;
+			*field_length = FLT_EVT_CTR_BYTES;
+			break;
 		case VBULK_THRESH:
 			*field_addr = VBULK_THRESH_ADDR;
 			*field_length = VBULK_THRESH_BYTES;
@@ -315,6 +319,7 @@ int app_fram_write_data( fram_data_t *buffer_to_write)
                     buffer_to_write->cName[6], buffer_to_write->cName[7], buffer_to_write->cName[8], buffer_to_write->cName[9]);
 		LOG_INF(">>[FRAM INFO]->negative_events_counter: %d", fram_data.negative_events_counter);
         LOG_INF(">>[FRAM INFO]->positive_events_counter: %d", fram_data.positive_events_counter);
+		LOG_INF(">>[FRAM INFO]->fault_events_counter: %d", fram_data.fault_events_counter);
 		return FRAM_SUCCESS;
 	}
 }
@@ -505,4 +510,5 @@ void fram_update_pol_counters(fram_data_t new_fram_buffer)
 {
 	app_fram_write_field(POS_EVT_CTR,(uint8_t*) &new_fram_buffer.positive_events_counter);
 	app_fram_write_field(NEG_EVT_CTR,(uint8_t*) &new_fram_buffer.negative_events_counter);
+	app_fram_write_field(FLT_EVT_CTR,(uint8_t*) &new_fram_buffer.fault_events_counter);
 }

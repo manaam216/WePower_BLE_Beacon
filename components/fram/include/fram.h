@@ -36,6 +36,8 @@
 #define NEG_EVT_CTR_BYTES			(4)
 #define POS_EVT_CTR_ADDR			(NEG_EVT_CTR_ADDR+NEG_EVT_CTR_BYTES)
 #define POS_EVT_CTR_BYTES			(4)
+#define FLT_EVT_CTR_ADDR			(POS_EVT_CTR_ADDR+POS_EVT_CTR_BYTES)
+#define FLT_EVT_CTR_BYTES			(4)
 
 
 /**
@@ -59,6 +61,7 @@ typedef struct
     uint8_t  vbulk_thresh;                                  // VBULK Threshold
     uint32_t negative_events_counter;                       // Counter indicating number of negative events
     uint32_t positive_events_counter;                       // Counter indicating number of positive events
+    uint32_t fault_events_counter;                          // Counter indicating number of fault events
 } fram_data_t;
 
 /**
@@ -82,6 +85,7 @@ enum FRAM_FIELDS
     VBULK_THRESH,        // VBULK Thresh
     NEG_EVT_CTR,         // negative event counter
     POS_EVT_CTR,         // positive event counter
+    FLT_EVT_CTR,         // fault event counter
     MAX_FRAM_FIELDS      // Maximum FRAM fields
 };
 

@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(wepower);
 #define FW_BUILD_DATE   "Build Date 1/6/24 ..."
 
 uint8_t u8Polarity = 0;
+uint8_t polarity_error = 0;
 
 static struct k_work_delayable update_frame_work;
 
@@ -161,7 +162,7 @@ int main(void)
         {
             k_sleep(K_MSEC(fram_data.sleep_after_wake)); 
             set_CN1_6();
-            u8Polarity = read_polarity();
+            u8Polarity = read_polarity(&polarity_error);
             clear_CN1_6();
         
             for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++)

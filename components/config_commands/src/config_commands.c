@@ -122,7 +122,8 @@ const fram_info_t FRAM_INFO[MAX_FRAM_FIELDS] =
     {"Device NAME",             DATA_STRING, NAME_NUM_BYTES,         0, 0,0}, // Since this is astring, max and min values do not matter
     {"VBULK THRESH",            DATA_NUMBER, VBULK_THRESH_BYTES, VBULK_THRESH_MIN_VALUE, VBULK_THRESH_MAX_VALUE, VBULK_THRESH_DEFAULT_VALUE},
     {"NEG EVT CTR",             DATA_NUMBER, NEG_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
-    {"POS EVT CTR",             DATA_NUMBER, POS_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE}
+    {"POS EVT CTR",             DATA_NUMBER, POS_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE},
+    {"FLT EVT CTR",             DATA_NUMBER, FLT_EVT_CTR_BYTES, POLARITY_COUNTERS_MIN_VALUE, POLARITY_COUNTERS_MAX_VALUE, POLARITY_COUNTERS_DEFAULT_VALUE}
 };
 
 
@@ -145,6 +146,7 @@ static fram_data_t Preset0 =
     PRESET0_DEFAULT_TX_POWER,
     PRESET0_DEFAULT_NAME,
     DEFAULT_VBULK_THRESH_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE
 };
@@ -169,6 +171,7 @@ static fram_data_t Preset1 =
     PRESET1_DEFAULT_NAME,
     DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
@@ -192,6 +195,7 @@ static fram_data_t Preset2 =
     PRESET2_DEFAULT_NAME,
     DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
@@ -214,6 +218,7 @@ static fram_data_t Preset3 =
     PRESET3_DEFAULT_TX_POWER,
     PRESET3_DEFAULT_NAME,
     DEFAULT_VBULK_THRESH_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE
 };
@@ -239,6 +244,7 @@ static fram_data_t Preset4 =
     DEFAULT_VBULK_THRESH_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
     DEFAULT_POLARITY_EVT_CTR_VALUE,
+    DEFAULT_POLARITY_EVT_CTR_VALUE
 };
 
 /**
@@ -298,6 +304,7 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset0.negative_events_counter);
             app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset0.positive_events_counter);
             app_fram_write_field(VBULK_THRESH, (uint8_t*) &Preset0.vbulk_thresh);
+            app_fram_write_field(FLT_EVT_CTR, (uint8_t*) &Preset0.fault_events_counter);
             break;
             
         case PRESET_TYPE_BUTTON_1:
@@ -316,6 +323,7 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset1.negative_events_counter);
             app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset1.positive_events_counter);
             app_fram_write_field(VBULK_THRESH, (uint8_t*) &Preset1.vbulk_thresh);
+            app_fram_write_field(FLT_EVT_CTR, (uint8_t*) &Preset1.fault_events_counter);
             break;
             
         case PRESET_TYPE_VIB_SENS:
@@ -334,6 +342,7 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset2.negative_events_counter);
             app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset2.positive_events_counter);
             app_fram_write_field(VBULK_THRESH, (uint8_t*) &Preset2.vbulk_thresh);
+            app_fram_write_field(FLT_EVT_CTR, (uint8_t*) &Preset2.fault_events_counter);
             break;
             
         case PRESET_TYPE_ON_OFF_SW:
@@ -352,6 +361,7 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset3.negative_events_counter);
             app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset3.positive_events_counter);
             app_fram_write_field(VBULK_THRESH, (uint8_t*) &Preset3.vbulk_thresh);
+            app_fram_write_field(FLT_EVT_CTR, (uint8_t*) &Preset3.fault_events_counter);
             break;
             
         case PRESET_TYPE_GENERATOR:
@@ -370,6 +380,7 @@ void preset_fram_by_type(uint8_t preset_type)
             app_fram_write_field(NEG_EVT_CTR, (uint8_t*) &Preset4.negative_events_counter);
             app_fram_write_field(POS_EVT_CTR, (uint8_t*) &Preset4.positive_events_counter);
             app_fram_write_field(VBULK_THRESH, (uint8_t*) &Preset4.vbulk_thresh);
+            app_fram_write_field(FLT_EVT_CTR, (uint8_t*) &Preset4.fault_events_counter);
             break;
         default:
             break; 
@@ -417,8 +428,12 @@ int32_t dump_fram(uint8_t print)
             read_buffer = 0;
             app_fram_read_field(POS_EVT_CTR,(uint8_t*) &read_buffer);
             fram_data.positive_events_counter = read_buffer;
+            read_buffer = 0;
+            app_fram_read_field(FLT_EVT_CTR,(uint8_t*) &read_buffer);
+            fram_data.fault_events_counter = read_buffer;
             LOG_INF("FRAM Index [14]->negative_events_counter: %d", fram_data.negative_events_counter);
             LOG_INF("FRAM Index [15]->positive_events_counter: %d \n", fram_data.positive_events_counter);
+            LOG_INF("FRAM Index [15]->fault_events_counter: %d \n", fram_data.fault_events_counter);
         }
 
     if (ret != FRAM_SUCCESS) 

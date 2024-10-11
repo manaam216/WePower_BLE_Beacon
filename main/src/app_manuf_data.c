@@ -12,6 +12,7 @@
 
 #include "app_encrypt.h"
 #include "app_sensors.h"
+#include "app_gpio.h"
 
 LOG_MODULE_DECLARE(wepower);
 
@@ -28,6 +29,7 @@ typedef enum
 uint8_t manufacture_data[PAYLOAD_FRAME_LENGTH] = { 0x50, 0x57, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 extern uint8_t u8Polarity;
+extern uint8_t polarity_error;
 
 /**
  * @brief 16 bytes of encrypted data, type dependent.
@@ -63,17 +65,21 @@ uint8_t TX_Repeat_Counter = TX_REPEAT_COUNTER_DEFAULT_VALUE;
  */
 static void increment_polarity_counter()
 {
-	if (u8Polarity)
+	if (polarity_error == POLAIRTY_ERROR)
 	{
-		fram_data.negative_events_counter++;
+		fram_data.fault_events_counter++;
 	}
 	else
 	{
-		fram_data.positive_events_counter++;
+		if (u8Polarity == POLARITY_NEGATIVE)
+		{
+			fram_data.negative_events_counter++;
+		}
+		else
+		{
+			fram_data.positive_events_counter++;
+		}
 	}
-
-	LOG_INF("fram_data.negative_events_counter %d",fram_data.negative_events_counter);
-	LOG_INF("fram_data.positive_events_counter %d",fram_data.positive_events_counter);
 }
 
 /**

@@ -9,8 +9,8 @@
  */
 typedef enum
 {
-    POLARITY_POSITIVE,
     POLARITY_NEGATIVE,
+    POLARITY_POSITIVE,
     POLAIRTY_ERROR
 }polairty_t;
 
@@ -120,10 +120,23 @@ void clear_CN1_4();
 void set_CN1_4();
 
 /**
- * @brief Read Differential Polaritry
+ * @brief Read Differential Polarity
+ *
+ * This function reads the states of two GPIO pins to determine the 
+ * polarity (positive, negative, or error) based on their states.
  * 
- * @return uint8_t 
+ * @param[out] polarity_reading_err Pointer to a variable that will 
+ * receive an error flag. It is set to 0 if the reading is valid 
+ * and 1 if there is an error (both pins are in the same state).
+ *
+ * @return uint8_t Returns one of the following:
+ *         - POLARITY_POSITIVE: If the positive pin is high and the 
+ *           negative pin is low.
+ *         - POLARITY_NEGATIVE: If the positive pin is low and the 
+ *           negative pin is high.
+ *         - POLARITY_ERROR: If both pins are high or both are low, 
+ *           indicating an error condition.
  */
-uint8_t read_polarity();
+uint8_t read_polarity(uint8_t *polarity_reading_err);
 
 #endif // __APP_GPIO__
