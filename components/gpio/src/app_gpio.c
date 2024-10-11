@@ -80,6 +80,8 @@ int init_we_power_board_gpios(void)
     gpio_pin_configure_dt(&connector_pin_5, GPIO_OUTPUT);
     gpio_pin_configure_dt(&connector_pin_6, GPIO_OUTPUT);
     gpio_pin_configure_dt(&connector_pin_7, GPIO_OUTPUT);
+
+    
     return 0;
 }
 

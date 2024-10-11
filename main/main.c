@@ -164,6 +164,7 @@ int main(void)
             set_CN1_6();
             u8Polarity = read_polarity(&polarity_error);
             clear_CN1_6();
+            set_CN1_5();
         
             for(uint8_t i = 0; i < ENCRYPTED_KEY_NUM_BYTES; i++)
             {
